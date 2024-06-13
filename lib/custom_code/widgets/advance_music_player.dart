@@ -17,6 +17,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:just_waveform/just_waveform.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http; // http 패키지 import
 
 class AdvanceMusicPlayer extends StatefulWidget {
   const AdvanceMusicPlayer({
@@ -191,20 +192,20 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
 
   void _setInitialUrl() async {
     try {
-      await audioPlayer.setUrl(widget.initialUrl);
+      final audioFile = await _fetchToLocalFile(widget.initialUrl);
+      await audioPlayer.setFilePath(audioFile.path);
       setState(() {
         FFAppState().currentURL = widget.initialUrl;
         currentRecordingName = getCurrentRecordingName();
       });
-      _initWaveform(widget.initialUrl);
+      _initWaveform(audioFile);
     } catch (error) {
       print('An error occurred while loading the initial audio URL: $error');
     }
   }
 
-  Future<void> _initWaveform(String audioUrl) async {
+  Future<void> _initWaveform(File audioFile) async {
     try {
-      final audioFile = await _fetchToLocalFile(audioUrl);
       final waveFile =
           File(p.join((await getTemporaryDirectory()).path, 'waveform.wave'));
       JustWaveform.extract(audioInFile: audioFile, waveOutFile: waveFile)
@@ -215,12 +216,24 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
   }
 
   Future<File> _fetchToLocalFile(String audioUrl) async {
-    final ByteData audioData = await rootBundle.load(audioUrl);
-    final Uint8List audioBytes = audioData.buffer.asUint8List();
-    final audioFile =
-        File(p.join((await getTemporaryDirectory()).path, 'waveform.mp3'));
-    await audioFile.writeAsBytes(audioBytes);
-    return audioFile;
+    if (audioUrl.startsWith('http')) {
+      final response = await http.get(Uri.parse(audioUrl));
+      if (response.statusCode == 200) {
+        final audioFile =
+            File(p.join((await getTemporaryDirectory()).path, 'audio.m4a'));
+        await audioFile.writeAsBytes(response.bodyBytes);
+        return audioFile;
+      } else {
+        throw Exception('Failed to load audio file from URL');
+      }
+    } else {
+      final ByteData audioData = await rootBundle.load(audioUrl);
+      final Uint8List audioBytes = audioData.buffer.asUint8List();
+      final audioFile =
+          File(p.join((await getTemporaryDirectory()).path, 'audio.m4a'));
+      await audioFile.writeAsBytes(audioBytes);
+      return audioFile;
+    }
   }
 
   @override
@@ -297,12 +310,13 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
 
   void _setUrl(String url) async {
     try {
-      await audioPlayer.setUrl(url);
+      final audioFile = await _fetchToLocalFile(url);
+      await audioPlayer.setFilePath(audioFile.path);
       setState(() {
         FFAppState().currentURL = url;
         currentRecordingName = getCurrentRecordingName();
       });
-      _initWaveform(url);
+      _initWaveform(audioFile);
     } catch (error) {
       print('An error occurred while setting the audio URL: $error');
     }
