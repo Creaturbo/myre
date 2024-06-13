@@ -49,6 +49,9 @@ class FFAppState extends ChangeNotifier {
           _Recordlist;
     });
     _safeInit(() {
+      _currentURL = prefs.getString('ff_currentURL') ?? _currentURL;
+    });
+    _safeInit(() {
       _deletetime = prefs.getString('ff_deletetime') ?? _deletetime;
     });
     _safeInit(() {
@@ -207,6 +210,7 @@ class FFAppState extends ChangeNotifier {
   String get currentURL => _currentURL;
   set currentURL(String value) {
     _currentURL = value;
+    prefs.setString('ff_currentURL', value);
   }
 
   String _deletetime = '1';

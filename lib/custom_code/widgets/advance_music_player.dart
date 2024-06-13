@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 // Begin custom widget code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
+import 'index.dart'; // Imports other custom widgets
+
 import 'package:just_audio/just_audio.dart';
 import 'dart:math';
 import 'dart:async';
@@ -263,13 +265,10 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
     } else {
       setState(() {
         FFAppState().currentURL = widget.musicUrls[currentSongIndex];
+        currentRecordingName = getCurrentRecordingName();
       });
 
-      audioPlayer.play().then((_) {
-        setState(() {
-          currentRecordingName = getCurrentRecordingName();
-        });
-      });
+      audioPlayer.play();
     }
   }
 
@@ -693,20 +692,20 @@ class AudioWaveformPainter extends CustomPainter {
     final waveformPixelsPerWindow = waveform.positionToPixel(duration).toInt();
     final waveformPixelsPerDevicePixel = waveformPixelsPerWindow / width;
     final waveformPixelsPerStep = waveformPixelsPerDevicePixel * pixelsPerStep;
+
+    // 현재 위치에 맞춰 파형 이동
     final sampleOffset =
         waveform.positionToPixel(currentPosition) - (width / 2);
-    final sampleStart = -sampleOffset % waveformPixelsPerStep;
+    final sampleStart = sampleOffset.toInt();
 
-    for (var i = sampleStart.toDouble();
-        i <= width + 1.0;
-        i += waveformPixelsPerStep) {
-      final sampleIdx = (sampleOffset + i).toInt();
-      final x = i;
+    for (var i = 0; i <= width; i += waveformPixelsPerStep) {
+      final sampleIdx = sampleStart + i;
+      final x = i.toDouble();
       final minY = normalise(waveform.getPixelMin(sampleIdx), height);
       final maxY = normalise(waveform.getPixelMax(sampleIdx), height);
       canvas.drawLine(
-        Offset(x + strokeWidth / 2, max(strokeWidth * 0.75, minY)),
-        Offset(x + strokeWidth / 2, min(height - strokeWidth * 0.75, maxY)),
+        Offset(x, minY),
+        Offset(x, maxY),
         wavePaint,
       );
     }
@@ -721,24 +720,6 @@ class AudioWaveformPainter extends CustomPainter {
       Offset(centerX, height),
       centerLinePaint,
     );
-
-    // 시간 표시
-    final textStyle = TextStyle(
-      color: Colors.black,
-      fontSize: 12,
-    );
-    final textPainter = TextPainter(textAlign: TextAlign.center);
-
-    for (var i = 0; i <= 5; i++) {
-      final textSpan = TextSpan(
-        text: '00:0$i',
-        style: textStyle,
-      );
-      textPainter.text = textSpan;
-      textPainter.layout();
-      final offset = Offset(centerX + i * waveformPixelsPerStep * 100, height);
-      textPainter.paint(canvas, offset);
-    }
   }
 
   @override

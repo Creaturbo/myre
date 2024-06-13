@@ -15,6 +15,7 @@ class RecordlistStruct extends BaseStruct {
     bool? save,
     int? id,
     bool? nameedit,
+    String? wave,
   })  : _audiofile = audiofile,
         _date = date,
         _check = check,
@@ -22,7 +23,8 @@ class RecordlistStruct extends BaseStruct {
         _name = name,
         _save = save,
         _id = id,
-        _nameedit = nameedit;
+        _nameedit = nameedit,
+        _wave = wave;
 
   // "audiofile" field.
   String? _audiofile;
@@ -82,6 +84,13 @@ class RecordlistStruct extends BaseStruct {
 
   bool hasNameedit() => _nameedit != null;
 
+  // "wave" field.
+  String? _wave;
+  String get wave => _wave ?? '';
+  set wave(String? val) => _wave = val;
+
+  bool hasWave() => _wave != null;
+
   static RecordlistStruct fromMap(Map<String, dynamic> data) =>
       RecordlistStruct(
         audiofile: data['audiofile'] as String?,
@@ -92,6 +101,7 @@ class RecordlistStruct extends BaseStruct {
         save: data['save'] as bool?,
         id: castToType<int>(data['id']),
         nameedit: data['nameedit'] as bool?,
+        wave: data['wave'] as String?,
       );
 
   static RecordlistStruct? maybeFromMap(dynamic data) => data is Map
@@ -107,6 +117,7 @@ class RecordlistStruct extends BaseStruct {
         'save': _save,
         'id': _id,
         'nameedit': _nameedit,
+        'wave': _wave,
       }.withoutNulls;
 
   @override
@@ -142,6 +153,10 @@ class RecordlistStruct extends BaseStruct {
         'nameedit': serializeParam(
           _nameedit,
           ParamType.bool,
+        ),
+        'wave': serializeParam(
+          _wave,
+          ParamType.String,
         ),
       }.withoutNulls;
 
@@ -187,6 +202,11 @@ class RecordlistStruct extends BaseStruct {
           ParamType.bool,
           false,
         ),
+        wave: deserializeParam(
+          data['wave'],
+          ParamType.String,
+          false,
+        ),
       );
 
   @override
@@ -202,12 +222,13 @@ class RecordlistStruct extends BaseStruct {
         name == other.name &&
         save == other.save &&
         id == other.id &&
-        nameedit == other.nameedit;
+        nameedit == other.nameedit &&
+        wave == other.wave;
   }
 
   @override
   int get hashCode => const ListEquality()
-      .hash([audiofile, date, check, favorite, name, save, id, nameedit]);
+      .hash([audiofile, date, check, favorite, name, save, id, nameedit, wave]);
 }
 
 RecordlistStruct createRecordlistStruct({
@@ -219,6 +240,7 @@ RecordlistStruct createRecordlistStruct({
   bool? save,
   int? id,
   bool? nameedit,
+  String? wave,
 }) =>
     RecordlistStruct(
       audiofile: audiofile,
@@ -229,4 +251,5 @@ RecordlistStruct createRecordlistStruct({
       save: save,
       id: id,
       nameedit: nameedit,
+      wave: wave,
     );
