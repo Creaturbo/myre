@@ -1,0 +1,2 @@
+NSMicrophoneUsageDescription = "اس ایپ کو آڈیو ریکارڈ کرنے کے لیے اجازت درکار ہے۔";
+NSBluetoothAlwaysUsageDescription = "اس ایپ کو بلوٹوتھ ڈیوائس کے ذریعے آڈیو ریکارڈ کرنے کے لیے بلوٹوتھ تک رسائی درکار ہے۔";

@@ -1,0 +1,2 @@
+NSMicrophoneUsageDescription = "Este aplicativo requer permissões para gravar áudio";
+NSBluetoothAlwaysUsageDescription = "Este aplicativo requer acesso Bluetooth para gravar áudio por meio de um dispositivo Bluetooth";

@@ -1,0 +1,2 @@
+NSMicrophoneUsageDescription = "このアプリは音声を録音するための権限が必要です";
+NSBluetoothAlwaysUsageDescription = "このアプリは、Bluetoothデバイス経由でオーディオを録音するためにBluetoothアクセスを必要とします";

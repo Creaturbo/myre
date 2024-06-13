@@ -1,0 +1,2 @@
+NSMicrophoneUsageDescription = "此应用需要录音权限";
+NSBluetoothAlwaysUsageDescription = "此应用需要蓝牙访问才能通过蓝牙设备录制音频";

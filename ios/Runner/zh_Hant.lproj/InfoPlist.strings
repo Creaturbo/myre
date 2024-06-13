@@ -1,0 +1,2 @@
+NSMicrophoneUsageDescription = "此應用程式需要錄製音訊的權限";
+NSBluetoothAlwaysUsageDescription = "此應用程式需要藍牙存取才能透過藍牙設備錄製音頻";

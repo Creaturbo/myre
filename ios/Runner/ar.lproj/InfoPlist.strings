@@ -1,0 +1,2 @@
+NSMicrophoneUsageDescription = "يتطلب هذا التطبيق أذونات لتسجيل الصوت";
+NSBluetoothAlwaysUsageDescription = "يتطلب هذا التطبيق الوصول إلى Bluetooth لتسجيل الصوت من خلال جهاز Bluetooth";

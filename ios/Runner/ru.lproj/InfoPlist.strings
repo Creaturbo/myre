@@ -1,0 +1,2 @@
+NSMicrophoneUsageDescription = "Этому приложению требуются разрешения на запись звука";
+NSBluetoothAlwaysUsageDescription = "Этому приложению требуется доступ к Bluetooth для записи звука через устройство Bluetooth.";
