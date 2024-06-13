@@ -8,8 +8,6 @@ import 'package:flutter/material.dart';
 // Begin custom widget code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-import 'index.dart'; // Imports other custom widgets
-
 import 'package:just_audio/just_audio.dart';
 import 'dart:math';
 import 'dart:async';
@@ -18,8 +16,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:just_waveform/just_waveform.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http; // http 패키지 import
+import 'package:flutter/services.dart'; // Add this line
 
 class AdvanceMusicPlayer extends StatefulWidget {
   const AdvanceMusicPlayer({
@@ -138,7 +135,6 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
   Timer? countdownTimer;
 
   final progressStream = BehaviorSubject<WaveformProgress>();
-  final waveformProgressStream = BehaviorSubject<Duration>();
 
   @override
   void initState() {
@@ -168,8 +164,6 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
       setState(() {
         currentPosition = position;
       });
-      waveformProgressStream.add(position);
-
       // Check if the selected timer is complete
       if (selectedTimer != null && currentPosition >= selectedTimer!) {
         audioPlayer.pause();
@@ -194,20 +188,21 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
 
   void _setInitialUrl() async {
     try {
-      final audioFile = await _fetchToLocalFile(widget.initialUrl);
-      await audioPlayer.setFilePath(audioFile.path);
+      await audioPlayer.setUrl(widget.initialUrl);
       setState(() {
-        FFAppState().currentURL = widget.initialUrl;
-        currentRecordingName = getCurrentRecordingName();
+        FFAppState().currentURL = widget.initialUrl; // Update currentURL
+        currentRecordingName =
+            getCurrentRecordingName(); // Set initial recording name
       });
-      _initWaveform(audioFile);
+      _initWaveform(widget.initialUrl);
     } catch (error) {
       print('An error occurred while loading the initial audio URL: $error');
     }
   }
 
-  Future<void> _initWaveform(File audioFile) async {
+  Future<void> _initWaveform(String audioUrl) async {
     try {
+      final audioFile = await _fetchToLocalFile(audioUrl);
       final waveFile =
           File(p.join((await getTemporaryDirectory()).path, 'waveform.wave'));
       JustWaveform.extract(audioInFile: audioFile, waveOutFile: waveFile)
@@ -218,24 +213,12 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
   }
 
   Future<File> _fetchToLocalFile(String audioUrl) async {
-    if (audioUrl.startsWith('http')) {
-      final response = await http.get(Uri.parse(audioUrl));
-      if (response.statusCode == 200) {
-        final audioFile =
-            File(p.join((await getTemporaryDirectory()).path, 'audio.m4a'));
-        await audioFile.writeAsBytes(response.bodyBytes);
-        return audioFile;
-      } else {
-        throw Exception('Failed to load audio file from URL');
-      }
-    } else {
-      final ByteData audioData = await rootBundle.load(audioUrl);
-      final Uint8List audioBytes = audioData.buffer.asUint8List();
-      final audioFile =
-          File(p.join((await getTemporaryDirectory()).path, 'audio.m4a'));
-      await audioFile.writeAsBytes(audioBytes);
-      return audioFile;
-    }
+    final ByteData audioData = await rootBundle.load(audioUrl);
+    final Uint8List audioBytes = audioData.buffer.asUint8List();
+    final audioFile =
+        File(p.join((await getTemporaryDirectory()).path, 'waveform.mp3'));
+    await audioFile.writeAsBytes(audioBytes);
+    return audioFile;
   }
 
   @override
@@ -246,7 +229,6 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
       countdownTimer!.cancel();
     }
     progressStream.close();
-    waveformProgressStream.close();
     super.dispose();
   }
 
@@ -256,7 +238,7 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
 
   void updatePosition(double value) {
     final newPosition = Duration(milliseconds: value.toInt());
-    seekTo(newPosition);
+    seekTo(newPosition); // Complete the method call by passing newPosition
   }
 
   void playPause() {
@@ -265,10 +247,13 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
     } else {
       setState(() {
         FFAppState().currentURL = widget.musicUrls[currentSongIndex];
-        currentRecordingName = getCurrentRecordingName();
       });
 
-      audioPlayer.play();
+      audioPlayer.play().then((_) {
+        setState(() {
+          currentRecordingName = getCurrentRecordingName();
+        });
+      });
     }
   }
 
@@ -309,13 +294,12 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
 
   void _setUrl(String url) async {
     try {
-      final audioFile = await _fetchToLocalFile(url);
-      await audioPlayer.setFilePath(audioFile.path);
+      await audioPlayer.setUrl(url);
       setState(() {
-        FFAppState().currentURL = url;
+        FFAppState().currentURL = url; // Update currentURL
         currentRecordingName = getCurrentRecordingName();
       });
-      _initWaveform(audioFile);
+      _initWaveform(url);
     } catch (error) {
       print('An error occurred while setting the audio URL: $error');
     }
@@ -363,7 +347,7 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
     setState(() {
       selectedTimer = duration;
       if (duration == Duration.zero) {
-        audioPlayer.pause();
+        audioPlayer.pause(); // Pause the player if the selected timer is 0
       }
       Navigator.pop(context);
     });
@@ -437,55 +421,48 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
             Container(
               height: 150.0,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Colors.grey.shade200,
                 borderRadius: const BorderRadius.all(Radius.circular(20.0)),
               ),
               padding: const EdgeInsets.all(16.0),
               width: double.maxFinite,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  StreamBuilder<WaveformProgress>(
-                    stream: progressStream,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        return Center(
-                          child: Text(
-                            'Error: ${snapshot.error}',
-                            style: Theme.of(context).textTheme.titleLarge,
-                            textAlign: TextAlign.center,
-                          ),
-                        );
-                      }
-                      final progress = snapshot.data?.progress ?? 0.0;
-                      final waveform = snapshot.data?.waveform;
-                      if (waveform == null) {
-                        return Center(
-                          child: Text(
-                            '${(100 * progress).toInt()}%',
-                            style: Theme.of(context).textTheme.titleLarge,
-                          ),
-                        );
-                      }
-                      return StreamBuilder<Duration>(
-                        stream: waveformProgressStream,
-                        builder: (context, snapshot) {
-                          final position = snapshot.data ?? Duration.zero;
-                          return AudioWaveformWidget(
-                            waveform: waveform,
-                            currentPosition: position,
-                            duration: waveform.duration,
-                          );
-                        },
-                      );
-                    },
-                  ),
-                  Container(
-                    width: 2,
-                    height: double.infinity,
-                    color: Colors.red,
-                  ),
-                ],
+              child: StreamBuilder<WaveformProgress>(
+                stream: progressStream,
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                        'Error: ${snapshot.error}',
+                        style: Theme.of(context).textTheme.titleLarge,
+                        textAlign: TextAlign.center,
+                      ),
+                    );
+                  }
+                  final progress = snapshot.data?.progress ?? 0.0;
+                  final waveform = snapshot.data?.waveform;
+                  if (waveform == null) {
+                    return Center(
+                      child: Text(
+                        '${(100 * progress).toInt()}%',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                    );
+                  }
+
+                  final visibleDuration = Duration(seconds: 10);
+                  final start = currentPosition - visibleDuration * 0.5;
+                  final end = currentPosition + visibleDuration * 0.5;
+                  final actualStart =
+                      start < Duration.zero ? Duration.zero : start;
+                  final actualEnd = end > totalDuration ? totalDuration : end;
+
+                  return AudioWaveformWidget(
+                    waveform: waveform,
+                    start: actualStart,
+                    duration: visibleDuration,
+                    currentPosition: currentPosition,
+                  );
+                },
               ),
             ),
             SizedBox(height: 8),
@@ -581,11 +558,15 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
                                   title: Text(
                                     '$minutes minutes',
                                     style: TextStyle(
-                                      color: isSelected ? Colors.blue : null,
+                                      color: isSelected
+                                          ? Colors
+                                              .blue // Customize the selected option's text color
+                                          : null,
                                     ),
                                   ),
                                   onTap: () {
-                                    setTimer(duration);
+                                    setTimer(
+                                        duration); // Set the selected timer
                                   },
                                 );
                               },
@@ -619,8 +600,9 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
 
 class AudioWaveformWidget extends StatelessWidget {
   final Waveform waveform;
-  final Duration currentPosition;
+  final Duration start;
   final Duration duration;
+  final Duration currentPosition;
   final Color waveColor;
   final double scale;
   final double strokeWidth;
@@ -629,9 +611,10 @@ class AudioWaveformWidget extends StatelessWidget {
   const AudioWaveformWidget({
     Key? key,
     required this.waveform,
-    required this.currentPosition,
+    required this.start,
     required this.duration,
-    this.waveColor = const Color(0xFF9489F5),
+    required this.currentPosition,
+    this.waveColor = Colors.blue,
     this.scale = 1.0,
     this.strokeWidth = 5.0,
     this.pixelsPerStep = 8.0,
@@ -643,15 +626,13 @@ class AudioWaveformWidget extends StatelessWidget {
       child: CustomPaint(
         painter: AudioWaveformPainter(
           waveform: waveform,
-          currentPosition: currentPosition,
+          start: start,
           duration: duration,
           waveColor: waveColor,
           scale: scale,
           strokeWidth: strokeWidth,
           pixelsPerStep: pixelsPerStep,
-        ),
-        child: Container(
-          color: Colors.white,
+          currentPosition: currentPosition,
         ),
       ),
     );
@@ -660,22 +641,24 @@ class AudioWaveformWidget extends StatelessWidget {
 
 class AudioWaveformPainter extends CustomPainter {
   final Waveform waveform;
-  final Duration currentPosition;
+  final Duration start;
   final Duration duration;
   final Color waveColor;
   final double scale;
   final double strokeWidth;
   final double pixelsPerStep;
+  final Duration currentPosition;
   final Paint wavePaint;
 
   AudioWaveformPainter({
     required this.waveform,
-    required this.currentPosition,
+    required this.start,
     required this.duration,
-    this.waveColor = const Color(0xFF9489F5),
+    this.waveColor = Colors.blue,
     this.scale = 1.0,
     this.strokeWidth = 5.0,
     this.pixelsPerStep = 8.0,
+    required this.currentPosition,
   }) : wavePaint = Paint()
           ..style = PaintingStyle.stroke
           ..strokeWidth = strokeWidth
@@ -692,39 +675,44 @@ class AudioWaveformPainter extends CustomPainter {
     final waveformPixelsPerWindow = waveform.positionToPixel(duration).toInt();
     final waveformPixelsPerDevicePixel = waveformPixelsPerWindow / width;
     final waveformPixelsPerStep = waveformPixelsPerDevicePixel * pixelsPerStep;
-
-    // 현재 위치에 맞춰 파형 이동
-    final sampleOffset =
-        waveform.positionToPixel(currentPosition) - (width / 2);
-    final sampleStart = sampleOffset.toInt();
-
-    for (var i = 0; i <= width; i += waveformPixelsPerStep) {
-      final sampleIdx = sampleStart + i;
-      final x = i.toDouble();
+    final sampleOffset = waveform.positionToPixel(start);
+    final sampleStart = -sampleOffset % waveformPixelsPerStep;
+    for (var i = sampleStart.toDouble();
+        i <= waveformPixelsPerWindow + 1.0;
+        i += waveformPixelsPerStep) {
+      final sampleIdx = (sampleOffset + i).toInt();
+      final x = i / waveformPixelsPerDevicePixel;
       final minY = normalise(waveform.getPixelMin(sampleIdx), height);
       final maxY = normalise(waveform.getPixelMax(sampleIdx), height);
       canvas.drawLine(
-        Offset(x, minY),
-        Offset(x, maxY),
+        Offset(x + strokeWidth / 2, max(strokeWidth * 0.75, minY)),
+        Offset(x + strokeWidth / 2, min(height - strokeWidth * 0.75, maxY)),
         wavePaint,
       );
     }
 
-    // 가운데 빨간 선 그리기
-    final centerX = width / 2;
-    final centerLinePaint = Paint()
-      ..color = Colors.red
-      ..strokeWidth = 2.0;
-    canvas.drawLine(
-      Offset(centerX, 0),
-      Offset(centerX, height),
-      centerLinePaint,
-    );
+    // 현재 재생 위치 표시
+    final playPosition = currentPosition - start;
+    if (playPosition >= Duration.zero && playPosition <= duration) {
+      final playX =
+          playPosition.inMilliseconds / duration.inMilliseconds * width;
+      final playPaint = Paint()
+        ..color = Colors.red
+        ..strokeWidth = 2.0
+        ..style = PaintingStyle.stroke;
+      canvas.drawLine(
+        Offset(playX, 0),
+        Offset(playX, height),
+        playPaint,
+      );
+    }
   }
 
   @override
   bool shouldRepaint(covariant AudioWaveformPainter oldDelegate) {
-    return true;
+    return oldDelegate.currentPosition != currentPosition ||
+        oldDelegate.start != start ||
+        oldDelegate.duration != duration;
   }
 
   double normalise(int s, double height) {
