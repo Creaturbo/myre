@@ -154,7 +154,7 @@ final kTranslationsMap = <Map<String, Map<String, String>>>[
   // HomePage
   {
     'wu2rs2xg': {
-      'en': '247 Recorder',
+      'en': '24/7 365 Recorder',
       'ar': 'مسجل مستمر',
       'bn': 'ক্রমাগত রেকর্ডার',
       'de': 'Dauerschreiber',
@@ -288,26 +288,6 @@ final kTranslationsMap = <Map<String, Map<String, String>>>[
       'ur': 'گھر',
       'zh_Hans': '家',
       'zh_Hant': '家',
-    },
-  },
-  // TranscribeItem
-  {
-    'n4bw6lng': {
-      'en': 'Hello World',
-      'ar': '',
-      'bn': '',
-      'de': '',
-      'es': '',
-      'fr': '',
-      'hi': '',
-      'it': '',
-      'ja': '',
-      'ko': '',
-      'pt': '',
-      'ru': '',
-      'ur': '',
-      'zh_Hans': '',
-      'zh_Hant': '',
     },
   },
   // HowToUse
