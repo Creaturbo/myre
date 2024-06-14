@@ -16,7 +16,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:just_waveform/just_waveform.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:flutter/services.dart'; // Add this line
+import 'package:flutter/services.dart';
 
 class AdvanceMusicPlayer extends StatefulWidget {
   const AdvanceMusicPlayer({
@@ -135,6 +135,7 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
   Timer? countdownTimer;
 
   final progressStream = BehaviorSubject<WaveformProgress>();
+  Waveform? currentWaveform;
 
   @override
   void initState() {
@@ -202,23 +203,25 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
 
   Future<void> _initWaveform(String audioUrl) async {
     try {
-      final audioFile = await _fetchToLocalFile(audioUrl);
+      final audioFile = File(audioUrl);
       final waveFile =
           File(p.join((await getTemporaryDirectory()).path, 'waveform.wave'));
-      JustWaveform.extract(audioInFile: audioFile, waveOutFile: waveFile)
-          .listen(progressStream.add, onError: progressStream.addError);
+
+      JustWaveform.extract(
+        audioInFile: audioFile,
+        waveOutFile: waveFile,
+        zoom: const WaveformZoom.pixelsPerSecond(100),
+      ).listen((waveformProgress) {
+        setState(() {
+          currentWaveform = waveformProgress.waveform;
+        });
+        progressStream.add(waveformProgress);
+      }, onError: (e) {
+        progressStream.addError(e);
+      });
     } catch (e) {
       progressStream.addError(e);
     }
-  }
-
-  Future<File> _fetchToLocalFile(String audioUrl) async {
-    final ByteData audioData = await rootBundle.load(audioUrl);
-    final Uint8List audioBytes = audioData.buffer.asUint8List();
-    final audioFile =
-        File(p.join((await getTemporaryDirectory()).path, 'waveform.mp3'));
-    await audioFile.writeAsBytes(audioBytes);
-    return audioFile;
   }
 
   @override
@@ -238,7 +241,7 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
 
   void updatePosition(double value) {
     final newPosition = Duration(milliseconds: value.toInt());
-    seekTo(newPosition); // Complete the method call by passing newPosition
+    seekTo(newPosition);
   }
 
   void playPause() {
@@ -439,7 +442,7 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
                     );
                   }
                   final progress = snapshot.data?.progress ?? 0.0;
-                  final waveform = snapshot.data?.waveform;
+                  final waveform = snapshot.data?.waveform ?? currentWaveform;
                   if (waveform == null) {
                     return Center(
                       child: Text(
@@ -558,15 +561,11 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
                                   title: Text(
                                     '$minutes minutes',
                                     style: TextStyle(
-                                      color: isSelected
-                                          ? Colors
-                                              .blue // Customize the selected option's text color
-                                          : null,
+                                      color: isSelected ? Colors.blue : null,
                                     ),
                                   ),
                                   onTap: () {
-                                    setTimer(
-                                        duration); // Set the selected timer
+                                    setTimer(duration);
                                   },
                                 );
                               },
