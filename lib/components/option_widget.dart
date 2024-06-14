@@ -237,6 +237,12 @@ class _OptionWidgetState extends State<OptionWidget> {
                               ),
                               FFLocalizations.of(context).getText(
                                 'zfc0vpyr' /* 3 */,
+                              ),
+                              FFLocalizations.of(context).getText(
+                                'yp90hemz' /* 4 */,
+                              ),
+                              FFLocalizations.of(context).getText(
+                                'h4qa6qlu' /* 5 */,
                               )
                             ],
                             onChanged: (val) async {
@@ -329,13 +335,19 @@ class _OptionWidgetState extends State<OptionWidget> {
                             ),
                             options: [
                               FFLocalizations.of(context).getText(
-                                '95we028i' /* 1 */,
+                                '95we028i' /* 15 */,
                               ),
                               FFLocalizations.of(context).getText(
                                 '82smr6hn' /* 30 */,
                               ),
                               FFLocalizations.of(context).getText(
                                 '9law8jq7' /* 60 */,
+                              ),
+                              FFLocalizations.of(context).getText(
+                                'fp7yleuc' /* 90 */,
+                              ),
+                              FFLocalizations.of(context).getText(
+                                'luikpb1y' /* 120 */,
                               )
                             ],
                             onChanged: (val) async {

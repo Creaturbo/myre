@@ -131,6 +131,17 @@ class _TranscribeItemWidgetState extends State<TranscribeItemWidget> {
                                         ),
                                   ),
                                 ),
+                                Text(
+                                  FFLocalizations.of(context).getText(
+                                    'n4bw6lng' /* Hello World */,
+                                  ),
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        fontFamily: 'Manrope',
+                                        letterSpacing: 0.0,
+                                      ),
+                                ),
                               ],
                             ),
                           ),

@@ -157,7 +157,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
             automaticallyImplyLeading: false,
             title: Text(
               FFLocalizations.of(context).getText(
-                'wu2rs2xg' /* Continuous recorder */,
+                'wu2rs2xg' /* 247 Recorder */,
               ),
               style: FlutterFlowTheme.of(context).headlineMedium.override(
                     fontFamily: 'Urbanist',

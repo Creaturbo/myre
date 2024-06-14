@@ -205,6 +205,13 @@ class _NoteWidgetState extends State<NoteWidget> {
                             .Recordlist
                             .map((e) => e.audiofile)
                             .toList(),
+                        waveformIconPath: Icon(
+                          Icons.graphic_eq,
+                          color: FlutterFlowTheme.of(context).primaryText,
+                          size: 30.0,
+                        ),
+                        waveformIconColor:
+                            FlutterFlowTheme.of(context).primaryText,
                       ),
                     ),
                     Padding(

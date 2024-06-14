@@ -16,7 +16,6 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:just_waveform/just_waveform.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:flutter/services.dart';
 
 class AdvanceMusicPlayer extends StatefulWidget {
   const AdvanceMusicPlayer({
@@ -52,6 +51,8 @@ class AdvanceMusicPlayer extends StatefulWidget {
     required this.speakerOffIconColor,
     required this.dropdownTextColor,
     required this.timerIcon,
+    required this.waveformIconPath, // 추가된 부분
+    required this.waveformIconColor, // 추가된 부분
   }) : super(key: key);
 
   final double? width;
@@ -85,6 +86,8 @@ class AdvanceMusicPlayer extends StatefulWidget {
   final Color speakerOffIconColor;
   final Color dropdownTextColor;
   final Widget timerIcon;
+  final Widget waveformIconPath; // 추가된 부분
+  final Color waveformIconColor; // 추가된 부분
 
   @override
   _AdvanceMusicPlayerState createState() => _AdvanceMusicPlayerState();
@@ -100,6 +103,7 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
   bool isLooping = false;
   bool isShuffling = false;
   bool isSpeakerOn = true;
+  bool showWaveform = false; // 추가된 부분: 파형 표시 여부를 위한 상태 변수
   String playbackSpeed = 'Normal';
   String currentRecordingName = 'Unknown';
   Map<String, double> speedValues = {
@@ -332,6 +336,13 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
     });
   }
 
+  void toggleWaveform() {
+    // 추가된 부분: 파형 표시 토글 함수
+    setState(() {
+      showWaveform = !showWaveform;
+    });
+  }
+
   void setPlaybackSpeed(String speed) {
     double playbackSpeed = speedValues[speed]!;
     audioPlayer.setSpeed(playbackSpeed);
@@ -421,53 +432,55 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
               ],
             ),
             SizedBox(height: 8),
-            Container(
-              height: 150.0,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                borderRadius: const BorderRadius.all(Radius.circular(20.0)),
-              ),
-              padding: const EdgeInsets.all(16.0),
-              width: double.maxFinite,
-              child: StreamBuilder<WaveformProgress>(
-                stream: progressStream,
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text(
-                        'Error: ${snapshot.error}',
-                        style: Theme.of(context).textTheme.titleLarge,
-                        textAlign: TextAlign.center,
-                      ),
-                    );
-                  }
-                  final progress = snapshot.data?.progress ?? 0.0;
-                  final waveform = snapshot.data?.waveform ?? currentWaveform;
-                  if (waveform == null) {
-                    return Center(
-                      child: Text(
-                        '${(100 * progress).toInt()}%',
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                    );
-                  }
+            if (showWaveform) // 추가된 부분: 파형 표시 여부에 따라 조건부 렌더링
+              Container(
+                height: 150.0,
+                decoration: BoxDecoration(
+                  color: Color(0xFFFFFFFF), // 배경색: #FFFFFF
+                  borderRadius: const BorderRadius.all(Radius.circular(20.0)),
+                ),
+                padding: const EdgeInsets.all(16.0),
+                width: double.maxFinite,
+                child: StreamBuilder<WaveformProgress>(
+                  stream: progressStream,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Center(
+                        child: Text(
+                          'Error: ${snapshot.error}',
+                          style: Theme.of(context).textTheme.titleLarge,
+                          textAlign: TextAlign.center,
+                        ),
+                      );
+                    }
+                    final progress = snapshot.data?.progress ?? 0.0;
+                    final waveform = snapshot.data?.waveform ?? currentWaveform;
+                    if (waveform == null) {
+                      return Center(
+                        child: Text(
+                          '${(100 * progress).toInt()}%',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                      );
+                    }
 
-                  final visibleDuration = Duration(seconds: 10);
-                  final start = currentPosition - visibleDuration * 0.5;
-                  final end = currentPosition + visibleDuration * 0.5;
-                  final actualStart =
-                      start < Duration.zero ? Duration.zero : start;
-                  final actualEnd = end > totalDuration ? totalDuration : end;
+                    final visibleDuration = Duration(seconds: 10);
+                    final start = currentPosition - visibleDuration * 0.5;
+                    final end = currentPosition + visibleDuration * 0.5;
+                    final actualStart =
+                        start < Duration.zero ? Duration.zero : start;
+                    final actualEnd = end > totalDuration ? totalDuration : end;
 
-                  return AudioWaveformWidget(
-                    waveform: waveform,
-                    start: actualStart,
-                    duration: visibleDuration,
-                    currentPosition: currentPosition,
-                  );
-                },
+                    return AudioWaveformWidget(
+                      waveform: waveform,
+                      start: actualStart,
+                      duration: visibleDuration,
+                      currentPosition: currentPosition,
+                      waveColor: Color(0xFF9489F5), // 파형 색상: #9489F5
+                    );
+                  },
+                ),
               ),
-            ),
             SizedBox(height: 8),
             Slider(
               value: currentPosition.inMilliseconds.toDouble(),
@@ -540,6 +553,13 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
                   child: isShuffling
                       ? widget.shuffleIconPressedPath
                       : widget.shuffleIconPath,
+                ),
+                IconButton(
+                  // 추가된 부분: 파형 토글 버튼
+                  icon: widget.waveformIconPath, // 아이콘 경로를 파라미터에서 받음
+                  color: widget.waveformIconColor,
+                  iconSize: 30.0,
+                  onPressed: toggleWaveform,
                 ),
                 GestureDetector(
                   onTap: () {
