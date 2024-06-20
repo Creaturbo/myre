@@ -269,14 +269,14 @@ class FFAppState extends ChangeNotifier {
     prefs.setBool('ff_Recording', value);
   }
 
-  bool _loopend = false;
+  bool _loopend = true;
   bool get loopend => _loopend;
   set loopend(bool value) {
     _loopend = value;
     prefs.setBool('ff_loopend', value);
   }
 
-  bool _startsignal = false;
+  bool _startsignal = true;
   bool get startsignal => _startsignal;
   set startsignal(bool value) {
     _startsignal = value;

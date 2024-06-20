@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '/backend/schema/structs/index.dart';
 
 import '/index.dart';
+import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 
 export 'package:go_router/go_router.dart';
@@ -34,10 +35,10 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
       errorBuilder: (context, state) => appStateNotifier.showSplashImage
           ? Builder(
               builder: (context) => Container(
-                color: Colors.black,
+                color: FlutterFlowTheme.of(context).primaryText,
                 child: Center(
                   child: Image.asset(
-                    'assets/images/loading.gif',
+                    'assets/images/g2t7j_2.jpg',
                     width: MediaQuery.sizeOf(context).width * 0.3,
                     fit: BoxFit.cover,
                   ),
@@ -52,10 +53,10 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           builder: (context, _) => appStateNotifier.showSplashImage
               ? Builder(
                   builder: (context) => Container(
-                    color: Colors.black,
+                    color: FlutterFlowTheme.of(context).primaryText,
                     child: Center(
                       child: Image.asset(
-                        'assets/images/loading.gif',
+                        'assets/images/g2t7j_2.jpg',
                         width: MediaQuery.sizeOf(context).width * 0.3,
                         fit: BoxFit.cover,
                       ),

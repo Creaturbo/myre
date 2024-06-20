@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "506533620321",
-    "project_id": "audio-recorder-app-75hh4n",
-    "storage_bucket": "audio-recorder-app-75hh4n.appspot.com"
+    "project_number": "290834340712",
+    "project_id": "realvoicetest2-aoj7hs",
+    "storage_bucket": "realvoicetest2-aoj7hs.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:506533620321:android:4bf87e71bf3d5fcb919820",
+        "mobilesdk_app_id": "1:290834340712:android:a6933a410e92b89e3c54dd",
         "android_client_info": {
-          "package_name": "com.ara"
+          "package_name": "Recorder.twofourseven"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBLfHKZbMlNkPqYnzdM0NX_Lr676yfx6NA"
+          "current_key": "AIzaSyADUrgActpHDELyKf5zziVllhN1-EF5bv0"
         }
       ],
       "services": {
@@ -26,7 +26,7 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:506533620321:android:d9d05abf5d2cad32919820",
+        "mobilesdk_app_id": "1:290834340712:android:73bdc8c92186fe8a3c54dd",
         "android_client_info": {
           "package_name": "com.connectio.meetings"
         }
@@ -34,7 +34,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBLfHKZbMlNkPqYnzdM0NX_Lr676yfx6NA"
+          "current_key": "AIzaSyADUrgActpHDELyKf5zziVllhN1-EF5bv0"
         }
       ],
       "services": {

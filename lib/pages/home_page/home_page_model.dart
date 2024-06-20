@@ -47,6 +47,14 @@ class HomePageModel extends FlutterFlowModel<HomePageWidget> {
 
   String uncheckAll = 'Uncheck All';
 
+  int? fidx;
+
+  bool fchkAll = false;
+
+  String fcheckAll = 'fCheck All';
+
+  String funcheckAll = 'fUncheck All';
+
   ///  State fields for stateful widgets in this page.
 
   final unfocusNode = FocusNode();
@@ -72,10 +80,7 @@ class HomePageModel extends FlutterFlowModel<HomePageWidget> {
   // State field(s) for Timer widget.
   final timerInitialTimeMs2 = 0;
   int timerMilliseconds2 = 0;
-  String timerValue2 = StopWatchTimer.getDisplayTime(
-    0,
-    hours: false,
-  );
+  String timerValue2 = StopWatchTimer.getDisplayTime(0, milliSecond: false);
   FlutterFlowTimerController timerController2 =
       FlutterFlowTimerController(StopWatchTimer(mode: StopWatchMode.countUp));
 

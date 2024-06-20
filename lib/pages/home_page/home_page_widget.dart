@@ -82,7 +82,22 @@ class _HomePageWidgetState extends State<HomePageWidget>
     )..addListener(() => setState(() {}));
     _model.textController ??= TextEditingController();
     _model.textFieldFocusNode ??= FocusNode();
-
+    _model.textFieldFocusNode!.addListener(
+      () async {
+        _model.isShowFullList = true;
+        setState(() {});
+        await actions.resetAllFilters(
+          context,
+        );
+        await actions.updateFilterForSearchResults(
+          context,
+          _model.simpleSearchResults.toList(),
+        );
+        await actions.refreshListView(
+          context,
+        );
+      },
+    );
     animationsMap.addAll({
       'transcribeItemOnPageLoadAnimation1': AnimationInfo(
         trigger: AnimationTrigger.onPageLoad,
@@ -108,27 +123,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
           ),
         ],
       ),
-      'iconOnActionTriggerAnimation': AnimationInfo(
-        trigger: AnimationTrigger.onActionTrigger,
-        applyInitialState: true,
-        effectsBuilder: () => [
-          ShakeEffect(
-            curve: Curves.easeInOut,
-            delay: 0.0.ms,
-            duration: 1000.0.ms,
-            hz: 10,
-            offset: const Offset(0.0, 0.0),
-            rotation: 0.087,
-          ),
-        ],
-      ),
     });
-    setupAnimations(
-      animationsMap.values.where((anim) =>
-          anim.trigger == AnimationTrigger.onActionTrigger ||
-          !anim.applyInitialState),
-      this,
-    );
 
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
@@ -332,361 +327,57 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                               controller:
                                                   _model.tabBarController1,
                                               children: [
-                                                Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.max,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
+                                                Stack(
                                                   children: [
-                                                    Flexible(
-                                                      flex: 3,
-                                                      child: Stack(
-                                                        alignment:
-                                                            const AlignmentDirectional(
-                                                                0.0, 0.0),
-                                                        children: [
-                                                          if (_model
-                                                                  .recording ??
-                                                              true)
-                                                            Align(
-                                                              alignment:
-                                                                  const AlignmentDirectional(
-                                                                      0.0, 0.0),
-                                                              child: InkWell(
-                                                                splashColor: Colors
-                                                                    .transparent,
-                                                                focusColor: Colors
-                                                                    .transparent,
-                                                                hoverColor: Colors
-                                                                    .transparent,
-                                                                highlightColor:
-                                                                    Colors
-                                                                        .transparent,
-                                                                onTap:
-                                                                    () async {
-                                                                  await stopAudioRecording(
-                                                                    audioRecorder:
-                                                                        _model
-                                                                            .audioRecorder,
-                                                                    audioName:
-                                                                        'recordedFileBytes1.mp3',
-                                                                    onRecordingComplete:
-                                                                        (audioFilePath,
-                                                                            audioBytes) {
-                                                                      _model.audioRecord =
-                                                                          audioFilePath;
-                                                                      _model.recordedFileBytes1 =
-                                                                          audioBytes;
-                                                                    },
-                                                                  );
-
-                                                                  _model.recording =
-                                                                      false;
-                                                                  _model.endTime =
-                                                                      getCurrentTimestamp;
-                                                                  _model.file =
-                                                                      _model
-                                                                          .audioRecord;
-                                                                  _model.responseSent =
-                                                                      true;
-                                                                  _model.addToAudiofilebyte(
-                                                                      _model
-                                                                          .recordedFileBytes1);
-                                                                  setState(
-                                                                      () {});
-                                                                  FFAppState()
-                                                                      .addToRecordlist(
-                                                                          RecordlistStruct(
-                                                                    audiofile:
-                                                                        _model
-                                                                            .audioRecord,
-                                                                    date: _model
-                                                                        .endTime,
-                                                                    check:
-                                                                        false,
-                                                                    name:
-                                                                        'Untitled${FFAppState().Recordlist.length.toString()}',
-                                                                  ));
-                                                                  FFAppState()
-                                                                          .Recording =
-                                                                      false;
-                                                                  setState(
-                                                                      () {});
-                                                                  await actions
-                                                                      .removeOutdatedRecordsandrefresh(
-                                                                    context,
-                                                                  );
-                                                                  await Future
-                                                                      .wait([
-                                                                    Future(
-                                                                        () async {
-                                                                      _model
-                                                                          .timerController1
-                                                                          .timer
-                                                                          .setPresetTime(
-                                                                        mSec: FFAppState()
-                                                                            .savesettime,
-                                                                        add:
-                                                                            false,
-                                                                      );
-                                                                      _model
-                                                                          .timerController1
-                                                                          .onResetTimer();
-
-                                                                      setState(
-                                                                          () {
-                                                                        _model
-                                                                            .tabBarController1!
-                                                                            .animateTo(
-                                                                          min(_model.tabBarController1!.length - 1,
-                                                                              _model.tabBarController1!.index + 1),
-                                                                          duration:
-                                                                              const Duration(milliseconds: 300),
-                                                                          curve:
-                                                                              Curves.ease,
-                                                                        );
-                                                                      });
-
-                                                                      if (FFAppState()
-                                                                              .Signalfactor ==
-                                                                          true) {
-                                                                        FFAppState().startsignal =
-                                                                            true;
-                                                                        setState(
-                                                                            () {});
-                                                                      } else {
-                                                                        FFAppState().startsignal =
-                                                                            false;
-                                                                        setState(
-                                                                            () {});
-                                                                      }
-                                                                    }),
-                                                                    Future(
-                                                                        () async {
-                                                                      _model
-                                                                          .timerController2
-                                                                          .onResetTimer();
-                                                                    }),
-                                                                  ]);
-
-                                                                  setState(
-                                                                      () {});
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  width: 150.0,
-                                                                  height: 150.0,
-                                                                  decoration:
-                                                                      const BoxDecoration(),
-                                                                  child:
-                                                                      SizedBox(
-                                                                    width:
-                                                                        100.0,
-                                                                    height:
-                                                                        100.0,
-                                                                    child: custom_widgets
-                                                                        .RecordingRipple(
-                                                                      width:
-                                                                          100.0,
-                                                                      height:
-                                                                          100.0,
-                                                                      repeat:
-                                                                          true,
-                                                                      rippleColor:
-                                                                          FlutterFlowTheme.of(context)
-                                                                              .tertiary,
-                                                                      elevation:
-                                                                          4.0,
-                                                                      borderRadius:
-                                                                          100.0,
-                                                                      borderColor:
-                                                                          FlutterFlowTheme.of(context)
-                                                                              .tertiary,
-                                                                      borderWidth:
-                                                                          5.0,
-                                                                      iconColor:
-                                                                          FlutterFlowTheme.of(context)
-                                                                              .secondaryBackground,
-                                                                      iconSize:
-                                                                          50.0,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          if (!_model
-                                                              .recording!)
-                                                            Align(
-                                                              alignment:
-                                                                  const AlignmentDirectional(
-                                                                      0.0, 0.0),
-                                                              child: InkWell(
-                                                                splashColor: Colors
-                                                                    .transparent,
-                                                                focusColor: Colors
-                                                                    .transparent,
-                                                                hoverColor: Colors
-                                                                    .transparent,
-                                                                highlightColor:
-                                                                    Colors
-                                                                        .transparent,
-                                                                onTap:
-                                                                    () async {
-                                                                  FFAppState()
-                                                                          .startsignal =
-                                                                      true;
-                                                                  FFAppState()
-                                                                          .loopend =
-                                                                      true;
-                                                                  setState(
-                                                                      () {});
-                                                                  while (FFAppState()
-                                                                      .loopend) {
-                                                                    await startAudioRecording(
-                                                                      context,
-                                                                      audioRecorder:
-                                                                          _model.audioRecorder ??=
-                                                                              AudioRecorder(),
-                                                                    );
-
-                                                                    await Future
-                                                                        .wait([
-                                                                      Future(
-                                                                          () async {
-                                                                        _model
-                                                                            .timerController1
-                                                                            .onStartTimer();
-                                                                        _model.recording =
-                                                                            true;
-                                                                        _model.startTime =
-                                                                            getCurrentTimestamp;
-                                                                        _model.responseReceived =
-                                                                            false;
-                                                                        _model.responseSent =
-                                                                            false;
-                                                                        setState(
-                                                                            () {});
-                                                                        FFAppState().starttime = _model
-                                                                            .endTime!
-                                                                            .millisecondsSinceEpoch;
-                                                                        FFAppState().Recording =
-                                                                            true;
-                                                                        FFAppState().startsignal =
-                                                                            false;
-                                                                        setState(
-                                                                            () {});
-                                                                        await actions
-                                                                            .waitForStartSignal(
-                                                                          context,
-                                                                        );
-                                                                      }),
-                                                                      Future(
-                                                                          () async {
-                                                                        _model
-                                                                            .timerController2
-                                                                            .onStartTimer();
-                                                                      }),
-                                                                    ]);
-                                                                  }
-                                                                },
-                                                                child: Material(
-                                                                  color: Colors
-                                                                      .transparent,
-                                                                  elevation:
-                                                                      4.0,
-                                                                  shape:
-                                                                      RoundedRectangleBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            100.0),
-                                                                  ),
-                                                                  child:
-                                                                      Container(
-                                                                    width:
-                                                                        100.0,
-                                                                    height:
-                                                                        100.0,
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      color: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .secondaryBackground,
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              100.0),
-                                                                      border:
-                                                                          Border
-                                                                              .all(
-                                                                        color: FlutterFlowTheme.of(context)
-                                                                            .primary,
-                                                                        width:
-                                                                            5.0,
-                                                                      ),
-                                                                    ),
-                                                                    child: Icon(
-                                                                      Icons.mic,
-                                                                      color: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .primary,
-                                                                      size:
-                                                                          50.0,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          Align(
+                                                    Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Flexible(
+                                                          flex: 3,
+                                                          child: Stack(
                                                             alignment:
                                                                 const AlignmentDirectional(
-                                                                    1.03, 0.95),
-                                                            child: Stack(
-                                                              children: [
+                                                                    0.0, 0.0),
+                                                            children: [
+                                                              if (_model
+                                                                      .recording ??
+                                                                  true)
                                                                 Align(
                                                                   alignment:
                                                                       const AlignmentDirectional(
                                                                           0.0,
-                                                                          0.48),
+                                                                          0.0),
                                                                   child:
-                                                                      FlutterFlowTimer(
-                                                                    initialTime:
-                                                                        FFAppState()
-                                                                            .savesettime,
-                                                                    getDisplayTime:
-                                                                        (value) =>
-                                                                            StopWatchTimer.getDisplayTime(value),
-                                                                    controller:
-                                                                        _model
-                                                                            .timerController1,
-                                                                    updateStateInterval:
-                                                                        const Duration(
-                                                                            milliseconds:
-                                                                                1000),
-                                                                    onChanged: (value,
-                                                                        displayTime,
-                                                                        shouldUpdate) {
-                                                                      _model.timerMilliseconds1 =
-                                                                          value;
-                                                                      _model.timerValue1 =
-                                                                          displayTime;
-                                                                      if (shouldUpdate) {
-                                                                        setState(
-                                                                            () {});
-                                                                      }
-                                                                    },
-                                                                    onEnded:
+                                                                      InkWell(
+                                                                    splashColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    focusColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    hoverColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    highlightColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    onTap:
                                                                         () async {
                                                                       await stopAudioRecording(
                                                                         audioRecorder:
                                                                             _model.audioRecorder,
                                                                         audioName:
-                                                                            'recordedFileBytes2.mp3',
+                                                                            'recordedFileBytes1.mp3',
                                                                         onRecordingComplete:
                                                                             (audioFilePath,
                                                                                 audioBytes) {
-                                                                          _model.audioRecord1 =
+                                                                          _model.audioRecord =
                                                                               audioFilePath;
-                                                                          _model.recordedFileBytes2 =
+                                                                          _model.recordedFileBytes1 =
                                                                               audioBytes;
                                                                         },
                                                                       );
@@ -697,7 +388,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                           getCurrentTimestamp;
                                                                       _model.file =
                                                                           _model
-                                                                              .audioRecord1;
+                                                                              .audioRecord;
                                                                       _model.responseSent =
                                                                           true;
                                                                       _model.addToAudiofilebyte(
@@ -709,11 +400,13 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                           .addToRecordlist(
                                                                               RecordlistStruct(
                                                                         audiofile:
-                                                                            _model.audioRecord1,
+                                                                            _model.audioRecord,
                                                                         date: _model
                                                                             .endTime,
                                                                         check:
                                                                             false,
+                                                                        name:
+                                                                            'Untitled${FFAppState().Recordlist.length.toString()}',
                                                                       ));
                                                                       FFAppState()
                                                                               .Recording =
@@ -741,6 +434,15 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                               .timerController1
                                                                               .onResetTimer();
 
+                                                                          setState(
+                                                                              () {
+                                                                            _model.tabBarController1!.animateTo(
+                                                                              min(_model.tabBarController1!.length - 1, _model.tabBarController1!.index + 1),
+                                                                              duration: const Duration(milliseconds: 300),
+                                                                              curve: Curves.ease,
+                                                                            );
+                                                                          });
+
                                                                           if (FFAppState().Signalfactor ==
                                                                               true) {
                                                                             FFAppState().startsignal =
@@ -763,81 +465,336 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                       setState(
                                                                           () {});
                                                                     },
-                                                                    textAlign:
-                                                                        TextAlign
-                                                                            .start,
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .headlineLarge
-                                                                        .override(
-                                                                          fontFamily:
-                                                                              'Urbanist',
-                                                                          color:
-                                                                              FlutterFlowTheme.of(context).primaryBackground,
-                                                                          letterSpacing:
-                                                                              0.0,
+                                                                    child:
+                                                                        Container(
+                                                                      width:
+                                                                          150.0,
+                                                                      height:
+                                                                          150.0,
+                                                                      decoration:
+                                                                          const BoxDecoration(),
+                                                                      child:
+                                                                          SizedBox(
+                                                                        width:
+                                                                            100.0,
+                                                                        height:
+                                                                            100.0,
+                                                                        child: custom_widgets
+                                                                            .RecordingRipple(
+                                                                          width:
+                                                                              100.0,
+                                                                          height:
+                                                                              100.0,
+                                                                          repeat:
+                                                                              true,
+                                                                          rippleColor:
+                                                                              FlutterFlowTheme.of(context).tertiary,
+                                                                          elevation:
+                                                                              4.0,
+                                                                          borderRadius:
+                                                                              100.0,
+                                                                          borderColor:
+                                                                              FlutterFlowTheme.of(context).tertiary,
+                                                                          borderWidth:
+                                                                              5.0,
+                                                                          iconColor:
+                                                                              FlutterFlowTheme.of(context).secondaryBackground,
+                                                                          iconSize:
+                                                                              50.0,
                                                                         ),
+                                                                      ),
+                                                                    ),
                                                                   ),
                                                                 ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                          Align(
-                                                            alignment:
-                                                                const AlignmentDirectional(
-                                                                    0.0, 0.46),
-                                                            child:
-                                                                FlutterFlowTimer(
-                                                              initialTime: _model
-                                                                  .timerInitialTimeMs2,
-                                                              getDisplayTime: (value) =>
-                                                                  StopWatchTimer
-                                                                      .getDisplayTime(
-                                                                value,
-                                                                hours: false,
-                                                              ),
-                                                              controller: _model
-                                                                  .timerController2,
-                                                              updateStateInterval:
-                                                                  const Duration(
-                                                                      milliseconds:
-                                                                          1000),
-                                                              onChanged: (value,
-                                                                  displayTime,
-                                                                  shouldUpdate) {
-                                                                _model.timerMilliseconds2 =
-                                                                    value;
-                                                                _model.timerValue2 =
-                                                                    displayTime;
-                                                                if (shouldUpdate) {
-                                                                  setState(
-                                                                      () {});
-                                                                }
-                                                              },
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .start,
-                                                              style: FlutterFlowTheme
-                                                                      .of(context)
-                                                                  .headlineSmall
-                                                                  .override(
-                                                                    fontFamily:
-                                                                        'Urbanist',
-                                                                    color: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .tertiary,
-                                                                    fontSize:
-                                                                        30.0,
-                                                                    letterSpacing:
-                                                                        0.0,
+                                                              if (!_model
+                                                                  .recording!)
+                                                                Align(
+                                                                  alignment:
+                                                                      const AlignmentDirectional(
+                                                                          0.0,
+                                                                          0.0),
+                                                                  child:
+                                                                      InkWell(
+                                                                    splashColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    focusColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    hoverColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    highlightColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    onTap:
+                                                                        () async {
+                                                                      FFAppState()
+                                                                              .startsignal =
+                                                                          true;
+                                                                      FFAppState()
+                                                                              .loopend =
+                                                                          true;
+                                                                      setState(
+                                                                          () {});
+                                                                      while (FFAppState()
+                                                                          .loopend) {
+                                                                        await startAudioRecording(
+                                                                          context,
+                                                                          audioRecorder: _model.audioRecorder ??=
+                                                                              AudioRecorder(),
+                                                                        );
+
+                                                                        await Future
+                                                                            .wait([
+                                                                          Future(
+                                                                              () async {
+                                                                            _model.timerController1.onStartTimer();
+                                                                            _model.recording =
+                                                                                true;
+                                                                            _model.startTime =
+                                                                                getCurrentTimestamp;
+                                                                            _model.responseReceived =
+                                                                                false;
+                                                                            _model.responseSent =
+                                                                                false;
+                                                                            setState(() {});
+                                                                            FFAppState().starttime =
+                                                                                _model.endTime!.millisecondsSinceEpoch;
+                                                                            FFAppState().Recording =
+                                                                                true;
+                                                                            FFAppState().startsignal =
+                                                                                false;
+                                                                            setState(() {});
+                                                                            await actions.waitForStartSignal(
+                                                                              context,
+                                                                            );
+                                                                          }),
+                                                                          Future(
+                                                                              () async {
+                                                                            _model.timerController2.onStartTimer();
+                                                                          }),
+                                                                        ]);
+                                                                      }
+                                                                    },
+                                                                    child:
+                                                                        Material(
+                                                                      color: Colors
+                                                                          .transparent,
+                                                                      elevation:
+                                                                          4.0,
+                                                                      shape:
+                                                                          RoundedRectangleBorder(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(100.0),
+                                                                      ),
+                                                                      child:
+                                                                          Container(
+                                                                        width:
+                                                                            100.0,
+                                                                        height:
+                                                                            100.0,
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          color:
+                                                                              FlutterFlowTheme.of(context).secondaryBackground,
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(100.0),
+                                                                          border:
+                                                                              Border.all(
+                                                                            color:
+                                                                                FlutterFlowTheme.of(context).primary,
+                                                                            width:
+                                                                                5.0,
+                                                                          ),
+                                                                        ),
+                                                                        child:
+                                                                            Icon(
+                                                                          Icons
+                                                                              .mic,
+                                                                          color:
+                                                                              FlutterFlowTheme.of(context).primary,
+                                                                          size:
+                                                                              50.0,
+                                                                        ),
+                                                                      ),
+                                                                    ),
                                                                   ),
-                                                            ),
+                                                                ),
+                                                              Align(
+                                                                alignment:
+                                                                    const AlignmentDirectional(
+                                                                        1.03,
+                                                                        0.95),
+                                                                child: Stack(
+                                                                  children: [
+                                                                    Align(
+                                                                      alignment:
+                                                                          const AlignmentDirectional(
+                                                                              0.0,
+                                                                              0.48),
+                                                                      child:
+                                                                          FlutterFlowTimer(
+                                                                        initialTime:
+                                                                            FFAppState().savesettime,
+                                                                        getDisplayTime:
+                                                                            (value) =>
+                                                                                StopWatchTimer.getDisplayTime(value),
+                                                                        controller:
+                                                                            _model.timerController1,
+                                                                        updateStateInterval:
+                                                                            const Duration(milliseconds: 1000),
+                                                                        onChanged: (value,
+                                                                            displayTime,
+                                                                            shouldUpdate) {
+                                                                          _model.timerMilliseconds1 =
+                                                                              value;
+                                                                          _model.timerValue1 =
+                                                                              displayTime;
+                                                                          if (shouldUpdate) {
+                                                                            setState(() {});
+                                                                          }
+                                                                        },
+                                                                        onEnded:
+                                                                            () async {
+                                                                          await stopAudioRecording(
+                                                                            audioRecorder:
+                                                                                _model.audioRecorder,
+                                                                            audioName:
+                                                                                'recordedFileBytes2.mp3',
+                                                                            onRecordingComplete:
+                                                                                (audioFilePath, audioBytes) {
+                                                                              _model.audioRecord1 = audioFilePath;
+                                                                              _model.recordedFileBytes2 = audioBytes;
+                                                                            },
+                                                                          );
+
+                                                                          _model.recording =
+                                                                              false;
+                                                                          _model.endTime =
+                                                                              getCurrentTimestamp;
+                                                                          _model.file =
+                                                                              _model.audioRecord1;
+                                                                          _model.responseSent =
+                                                                              true;
+                                                                          _model
+                                                                              .addToAudiofilebyte(_model.recordedFileBytes1);
+                                                                          setState(
+                                                                              () {});
+                                                                          FFAppState()
+                                                                              .addToRecordlist(RecordlistStruct(
+                                                                            audiofile:
+                                                                                _model.audioRecord1,
+                                                                            date:
+                                                                                _model.endTime,
+                                                                            check:
+                                                                                false,
+                                                                          ));
+                                                                          FFAppState().Recording =
+                                                                              false;
+                                                                          setState(
+                                                                              () {});
+                                                                          await actions
+                                                                              .removeOutdatedRecordsandrefresh(
+                                                                            context,
+                                                                          );
+                                                                          await Future
+                                                                              .wait([
+                                                                            Future(() async {
+                                                                              _model.timerController1.timer.setPresetTime(
+                                                                                mSec: FFAppState().savesettime,
+                                                                                add: false,
+                                                                              );
+                                                                              _model.timerController1.onResetTimer();
+
+                                                                              if (FFAppState().Signalfactor == true) {
+                                                                                FFAppState().startsignal = true;
+                                                                                setState(() {});
+                                                                              } else {
+                                                                                FFAppState().startsignal = false;
+                                                                                setState(() {});
+                                                                              }
+                                                                            }),
+                                                                            Future(() async {
+                                                                              _model.timerController2.onResetTimer();
+                                                                            }),
+                                                                          ]);
+
+                                                                          setState(
+                                                                              () {});
+                                                                        },
+                                                                        textAlign:
+                                                                            TextAlign.start,
+                                                                        style: FlutterFlowTheme.of(context)
+                                                                            .headlineLarge
+                                                                            .override(
+                                                                              fontFamily: 'Urbanist',
+                                                                              color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                              letterSpacing: 0.0,
+                                                                            ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              Align(
+                                                                alignment:
+                                                                    const AlignmentDirectional(
+                                                                        0.0,
+                                                                        0.46),
+                                                                child:
+                                                                    FlutterFlowTimer(
+                                                                  initialTime:
+                                                                      _model
+                                                                          .timerInitialTimeMs2,
+                                                                  getDisplayTime: (value) =>
+                                                                      StopWatchTimer.getDisplayTime(
+                                                                          value,
+                                                                          milliSecond:
+                                                                              false),
+                                                                  controller: _model
+                                                                      .timerController2,
+                                                                  updateStateInterval:
+                                                                      const Duration(
+                                                                          milliseconds:
+                                                                              1000),
+                                                                  onChanged: (value,
+                                                                      displayTime,
+                                                                      shouldUpdate) {
+                                                                    _model.timerMilliseconds2 =
+                                                                        value;
+                                                                    _model.timerValue2 =
+                                                                        displayTime;
+                                                                    if (shouldUpdate) {
+                                                                      setState(
+                                                                          () {});
+                                                                    }
+                                                                  },
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .start,
+                                                                  style: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .headlineSmall
+                                                                      .override(
+                                                                        fontFamily:
+                                                                            'Urbanist',
+                                                                        color: FlutterFlowTheme.of(context)
+                                                                            .tertiary,
+                                                                        fontSize:
+                                                                            30.0,
+                                                                        letterSpacing:
+                                                                            0.0,
+                                                                      ),
+                                                                ),
+                                                              ),
+                                                            ],
                                                           ),
-                                                        ],
-                                                      ),
+                                                        ),
+                                                      ].divide(const SizedBox(
+                                                          height: 24.0)),
                                                     ),
-                                                  ].divide(
-                                                      const SizedBox(height: 24.0)),
+                                                  ],
                                                 ),
                                                 Stack(
                                                   children: [
@@ -1514,15 +1471,77 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                                 mainAxisSize: MainAxisSize.max,
                                                                                                                 mainAxisAlignment: MainAxisAlignment.start,
                                                                                                                 children: [
-                                                                                                                  Container(
-                                                                                                                    width: 38.0,
-                                                                                                                    height: 40.0,
-                                                                                                                    decoration: BoxDecoration(
-                                                                                                                      color: FlutterFlowTheme.of(context).secondaryBackground,
-                                                                                                                    ),
-                                                                                                                    child: Stack(
-                                                                                                                      children: [
-                                                                                                                        FFButtonWidget(
+                                                                                                                  Builder(
+                                                                                                                    builder: (context) {
+                                                                                                                      if (recmonItem.favorite) {
+                                                                                                                        return Align(
+                                                                                                                          alignment: const AlignmentDirectional(-1.0, 0.0),
+                                                                                                                          child: InkWell(
+                                                                                                                            splashColor: Colors.transparent,
+                                                                                                                            focusColor: Colors.transparent,
+                                                                                                                            hoverColor: Colors.transparent,
+                                                                                                                            highlightColor: Colors.transparent,
+                                                                                                                            onTap: () async {
+                                                                                                                              var confirmDialogResponse = await showDialog<bool>(
+                                                                                                                                    context: context,
+                                                                                                                                    builder: (alertDialogContext) {
+                                                                                                                                      return AlertDialog(
+                                                                                                                                        title: const Text('Remove?'),
+                                                                                                                                        content: const Text('Do you want to remove this item from your favorites?'),
+                                                                                                                                        actions: [
+                                                                                                                                          TextButton(
+                                                                                                                                            onPressed: () => Navigator.pop(alertDialogContext, false),
+                                                                                                                                            child: const Text('Cancel'),
+                                                                                                                                          ),
+                                                                                                                                          TextButton(
+                                                                                                                                            onPressed: () => Navigator.pop(alertDialogContext, true),
+                                                                                                                                            child: const Text('Remove'),
+                                                                                                                                          ),
+                                                                                                                                        ],
+                                                                                                                                      );
+                                                                                                                                    },
+                                                                                                                                  ) ??
+                                                                                                                                  false;
+                                                                                                                              if (confirmDialogResponse) {
+                                                                                                                                FFAppState().favorite = false;
+                                                                                                                                setState(() {});
+                                                                                                                                FFAppState().updateRecordlistAtIndex(
+                                                                                                                                  recmonIndex,
+                                                                                                                                  (e) => e..favorite = FFAppState().favorite,
+                                                                                                                                );
+                                                                                                                                setState(() {});
+                                                                                                                              }
+                                                                                                                              FFAppState().favorite = false;
+                                                                                                                              setState(() {});
+                                                                                                                            },
+                                                                                                                            child: Container(
+                                                                                                                              width: 40.0,
+                                                                                                                              height: 39.0,
+                                                                                                                              decoration: BoxDecoration(
+                                                                                                                                borderRadius: BorderRadius.circular(0.0),
+                                                                                                                                shape: BoxShape.rectangle,
+                                                                                                                                border: Border.all(
+                                                                                                                                  color: FlutterFlowTheme.of(context).secondaryBackground,
+                                                                                                                                  width: 2.0,
+                                                                                                                                ),
+                                                                                                                              ),
+                                                                                                                              alignment: const AlignmentDirectional(0.0, 0.0),
+                                                                                                                              child: Align(
+                                                                                                                                alignment: const AlignmentDirectional(-1.0, 0.0),
+                                                                                                                                child: Padding(
+                                                                                                                                  padding: const EdgeInsetsDirectional.fromSTEB(0.5, 0.0, 0.0, 0.0),
+                                                                                                                                  child: Icon(
+                                                                                                                                    Icons.star_rate,
+                                                                                                                                    color: FlutterFlowTheme.of(context).primary,
+                                                                                                                                    size: 25.0,
+                                                                                                                                  ),
+                                                                                                                                ),
+                                                                                                                              ),
+                                                                                                                            ),
+                                                                                                                          ),
+                                                                                                                        );
+                                                                                                                      } else {
+                                                                                                                        return FFButtonWidget(
                                                                                                                           onPressed: () async {
                                                                                                                             var confirmDialogResponse = await showDialog<bool>(
                                                                                                                                   context: context,
@@ -1570,8 +1589,8 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                                             size: 25.0,
                                                                                                                           ),
                                                                                                                           options: FFButtonOptions(
-                                                                                                                            width: 50.0,
-                                                                                                                            height: 85.0,
+                                                                                                                            width: 40.0,
+                                                                                                                            height: 39.0,
                                                                                                                             padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
                                                                                                                             iconPadding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
                                                                                                                             color: FlutterFlowTheme.of(context).secondaryBackground,
@@ -1588,21 +1607,9 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                                             borderRadius: BorderRadius.circular(8.0),
                                                                                                                             hoverTextColor: FlutterFlowTheme.of(context).primary,
                                                                                                                           ),
-                                                                                                                        ),
-                                                                                                                        if (recmonItem.favorite)
-                                                                                                                          Align(
-                                                                                                                            alignment: const AlignmentDirectional(-1.0, 0.0),
-                                                                                                                            child: Padding(
-                                                                                                                              padding: const EdgeInsetsDirectional.fromSTEB(4.0, 7.0, 0.0, 6.0),
-                                                                                                                              child: Icon(
-                                                                                                                                Icons.star,
-                                                                                                                                color: FlutterFlowTheme.of(context).tertiary,
-                                                                                                                                size: 24.0,
-                                                                                                                              ),
-                                                                                                                            ),
-                                                                                                                          ),
-                                                                                                                      ],
-                                                                                                                    ),
+                                                                                                                        );
+                                                                                                                      }
+                                                                                                                    },
                                                                                                                   ),
                                                                                                                   Padding(
                                                                                                                     padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 5.0, 0.0),
@@ -1825,6 +1832,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                                                   startTime: _model.startTime?.toString(),
                                                                                                                                   endTime: _model.endTime?.toString(),
                                                                                                                                 );
+
                                                                                                                                 if ((_model.apiRequestBuildship?.succeeded ?? true)) {
                                                                                                                                   _model.responseReceived = true;
                                                                                                                                   setState(() {});
@@ -2755,6 +2763,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                                                 startTime: _model.startTime?.toString(),
                                                                                                                                 endTime: _model.endTime?.toString(),
                                                                                                                               );
+
                                                                                                                               if ((_model.apiRequestBuildship1?.succeeded ?? true)) {
                                                                                                                                 _model.responseReceived = true;
                                                                                                                                 setState(() {});
@@ -2833,87 +2842,245 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                 ),
                                                 Stack(
                                                   children: [
-                                                    SizedBox(
-                                                      height: 34.0,
-                                                      child: Stack(
-                                                        children: [
-                                                          Align(
-                                                            alignment:
-                                                                const AlignmentDirectional(
-                                                                    -1.0, -1.0),
-                                                            child:
-                                                                TextFormField(
-                                                              controller: _model
-                                                                  .textController,
-                                                              focusNode: _model
-                                                                  .textFieldFocusNode,
-                                                              onChanged: (_) =>
-                                                                  EasyDebounce
-                                                                      .debounce(
-                                                                '_model.textController',
-                                                                const Duration(
-                                                                    milliseconds:
-                                                                        2000),
-                                                                () async {
-                                                                  await actions
-                                                                      .resetAllFilters(
-                                                                    context,
-                                                                  );
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsetsDirectional
+                                                              .fromSTEB(
+                                                                  5.0,
+                                                                  0.0,
+                                                                  10.0,
+                                                                  0.0),
+                                                      child: SizedBox(
+                                                        height: 34.0,
+                                                        child: Stack(
+                                                          children: [
+                                                            Align(
+                                                              alignment:
+                                                                  const AlignmentDirectional(
+                                                                      -1.0,
+                                                                      -1.0),
+                                                              child:
+                                                                  TextFormField(
+                                                                controller: _model
+                                                                    .textController,
+                                                                focusNode: _model
+                                                                    .textFieldFocusNode,
+                                                                onChanged: (_) =>
+                                                                    EasyDebounce
+                                                                        .debounce(
+                                                                  '_model.textController',
+                                                                  const Duration(
+                                                                      milliseconds:
+                                                                          2000),
+                                                                  () async {
+                                                                    _model.isShowFullList =
+                                                                        false;
+                                                                    setState(
+                                                                        () {});
+                                                                    await actions
+                                                                        .resetAllFilters(
+                                                                      context,
+                                                                    );
+                                                                    await actions
+                                                                        .updateFilterForSearchResults(
+                                                                      context,
+                                                                      _model
+                                                                          .simpleSearchResults
+                                                                          .toList(),
+                                                                    );
+                                                                    await actions
+                                                                        .refreshListView(
+                                                                      context,
+                                                                    );
+                                                                  },
+                                                                ),
+                                                                onFieldSubmitted:
+                                                                    (_) async {
+                                                                  safeSetState(
+                                                                      () {
+                                                                    _model
+                                                                        .simpleSearchResults = TextSearch(FFAppState()
+                                                                            .items
+                                                                            .map((e) => e
+                                                                                .transcription)
+                                                                            .toList()
+                                                                            .map((str) =>
+                                                                                TextSearchItem.fromTerms(str, [
+                                                                                  str
+                                                                                ]))
+                                                                            .toList())
+                                                                        .search(_model
+                                                                            .textController
+                                                                            .text)
+                                                                        .map((r) =>
+                                                                            r.object)
+                                                                        .toList();
+                                                                  });
                                                                   _model.isShowFullList =
                                                                       false;
                                                                   setState(
                                                                       () {});
+                                                                  await actions
+                                                                      .updateFilterForSearchResults(
+                                                                    context,
+                                                                    _model
+                                                                        .simpleSearchResults
+                                                                        .toList(),
+                                                                  );
+                                                                  await actions
+                                                                      .refreshListView(
+                                                                    context,
+                                                                  );
+                                                                  await actions
+                                                                      .resetAllFilters(
+                                                                    context,
+                                                                  );
                                                                 },
-                                                              ),
-                                                              onFieldSubmitted:
-                                                                  (_) async {
-                                                                safeSetState(
-                                                                    () {
-                                                                  _model
-                                                                      .simpleSearchResults = TextSearch(FFAppState()
-                                                                          .items
-                                                                          .map((e) => e
-                                                                              .transcription)
-                                                                          .toList()
-                                                                          .map((str) =>
-                                                                              TextSearchItem.fromTerms(str, [
-                                                                                str
-                                                                              ]))
-                                                                          .toList())
-                                                                      .search(_model
-                                                                          .textController
-                                                                          .text)
-                                                                      .map((r) =>
-                                                                          r.object)
-                                                                      .toList();
-                                                                });
-                                                                _model.isShowFullList =
-                                                                    false;
-                                                                setState(() {});
-                                                                await actions
-                                                                    .updateFilterForSearchResults(
-                                                                  context,
-                                                                  _model
-                                                                      .simpleSearchResults
-                                                                      .toList(),
-                                                                );
-                                                                await actions
-                                                                    .refreshListView(
-                                                                  context,
-                                                                );
-                                                              },
-                                                              autofocus: true,
-                                                              obscureText:
-                                                                  false,
-                                                              decoration:
-                                                                  InputDecoration(
-                                                                hintText:
-                                                                    FFLocalizations.of(
-                                                                            context)
-                                                                        .getText(
-                                                                  '9rt4o846' /* Search for recordings.. */,
+                                                                autofocus:
+                                                                    false,
+                                                                obscureText:
+                                                                    false,
+                                                                decoration:
+                                                                    InputDecoration(
+                                                                  hintText: FFLocalizations.of(
+                                                                          context)
+                                                                      .getText(
+                                                                    '9rt4o846' /* Search for recordings.. */,
+                                                                  ),
+                                                                  hintStyle: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .titleMedium
+                                                                      .override(
+                                                                        fontFamily:
+                                                                            'Manrope',
+                                                                        color: FlutterFlowTheme.of(context)
+                                                                            .secondaryText,
+                                                                        letterSpacing:
+                                                                            0.0,
+                                                                      ),
+                                                                  enabledBorder:
+                                                                      UnderlineInputBorder(
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                      color: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .alternate,
+                                                                      width:
+                                                                          2.0,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        const BorderRadius
+                                                                            .only(
+                                                                      topLeft: Radius
+                                                                          .circular(
+                                                                              4.0),
+                                                                      topRight:
+                                                                          Radius.circular(
+                                                                              4.0),
+                                                                    ),
+                                                                  ),
+                                                                  focusedBorder:
+                                                                      UnderlineInputBorder(
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                      color: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .primary,
+                                                                      width:
+                                                                          2.0,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        const BorderRadius
+                                                                            .only(
+                                                                      topLeft: Radius
+                                                                          .circular(
+                                                                              4.0),
+                                                                      topRight:
+                                                                          Radius.circular(
+                                                                              4.0),
+                                                                    ),
+                                                                  ),
+                                                                  errorBorder:
+                                                                      const UnderlineInputBorder(
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                      color: Color(
+                                                                          0x00000000),
+                                                                      width:
+                                                                          2.0,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .only(
+                                                                      topLeft: Radius
+                                                                          .circular(
+                                                                              4.0),
+                                                                      topRight:
+                                                                          Radius.circular(
+                                                                              4.0),
+                                                                    ),
+                                                                  ),
+                                                                  focusedErrorBorder:
+                                                                      const UnderlineInputBorder(
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                      color: Color(
+                                                                          0x00000000),
+                                                                      width:
+                                                                          2.0,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .only(
+                                                                      topLeft: Radius
+                                                                          .circular(
+                                                                              4.0),
+                                                                      topRight:
+                                                                          Radius.circular(
+                                                                              4.0),
+                                                                    ),
+                                                                  ),
+                                                                  contentPadding:
+                                                                      const EdgeInsetsDirectional.fromSTEB(
+                                                                          5.0,
+                                                                          10.0,
+                                                                          0.0,
+                                                                          10.0),
+                                                                  suffixIcon: _model
+                                                                          .textController!
+                                                                          .text
+                                                                          .isNotEmpty
+                                                                      ? InkWell(
+                                                                          onTap:
+                                                                              () async {
+                                                                            _model.textController?.clear();
+                                                                            _model.isShowFullList =
+                                                                                false;
+                                                                            setState(() {});
+                                                                            await actions.resetAllFilters(
+                                                                              context,
+                                                                            );
+                                                                            await actions.updateFilterForSearchResults(
+                                                                              context,
+                                                                              _model.simpleSearchResults.toList(),
+                                                                            );
+                                                                            await actions.refreshListView(
+                                                                              context,
+                                                                            );
+                                                                            setState(() {});
+                                                                          },
+                                                                          child:
+                                                                              Icon(
+                                                                            Icons.clear,
+                                                                            color:
+                                                                                FlutterFlowTheme.of(context).primary,
+                                                                            size:
+                                                                                30.0,
+                                                                          ),
+                                                                        )
+                                                                      : null,
                                                                 ),
-                                                                hintStyle: FlutterFlowTheme.of(
+                                                                style: FlutterFlowTheme.of(
                                                                         context)
                                                                     .titleMedium
                                                                     .override(
@@ -2921,197 +3088,21 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                           'Manrope',
                                                                       color: FlutterFlowTheme.of(
                                                                               context)
-                                                                          .secondaryText,
+                                                                          .primaryText,
                                                                       letterSpacing:
                                                                           0.0,
                                                                     ),
-                                                                enabledBorder:
-                                                                    UnderlineInputBorder(
-                                                                  borderSide:
-                                                                      BorderSide(
-                                                                    color: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .alternate,
-                                                                    width: 2.0,
-                                                                  ),
-                                                                  borderRadius:
-                                                                      const BorderRadius
-                                                                          .only(
-                                                                    topLeft: Radius
-                                                                        .circular(
-                                                                            4.0),
-                                                                    topRight: Radius
-                                                                        .circular(
-                                                                            4.0),
-                                                                  ),
-                                                                ),
-                                                                focusedBorder:
-                                                                    UnderlineInputBorder(
-                                                                  borderSide:
-                                                                      BorderSide(
-                                                                    color: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .primary,
-                                                                    width: 2.0,
-                                                                  ),
-                                                                  borderRadius:
-                                                                      const BorderRadius
-                                                                          .only(
-                                                                    topLeft: Radius
-                                                                        .circular(
-                                                                            4.0),
-                                                                    topRight: Radius
-                                                                        .circular(
-                                                                            4.0),
-                                                                  ),
-                                                                ),
-                                                                errorBorder:
-                                                                    const UnderlineInputBorder(
-                                                                  borderSide:
-                                                                      BorderSide(
-                                                                    color: Color(
-                                                                        0x00000000),
-                                                                    width: 2.0,
-                                                                  ),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .only(
-                                                                    topLeft: Radius
-                                                                        .circular(
-                                                                            4.0),
-                                                                    topRight: Radius
-                                                                        .circular(
-                                                                            4.0),
-                                                                  ),
-                                                                ),
-                                                                focusedErrorBorder:
-                                                                    const UnderlineInputBorder(
-                                                                  borderSide:
-                                                                      BorderSide(
-                                                                    color: Color(
-                                                                        0x00000000),
-                                                                    width: 2.0,
-                                                                  ),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .only(
-                                                                    topLeft: Radius
-                                                                        .circular(
-                                                                            4.0),
-                                                                    topRight: Radius
-                                                                        .circular(
-                                                                            4.0),
-                                                                  ),
-                                                                ),
-                                                                contentPadding:
-                                                                    const EdgeInsetsDirectional
-                                                                        .fromSTEB(
-                                                                            5.0,
-                                                                            10.0,
-                                                                            0.0,
-                                                                            10.0),
-                                                              ),
-                                                              style: FlutterFlowTheme
-                                                                      .of(context)
-                                                                  .titleMedium
-                                                                  .override(
-                                                                    fontFamily:
-                                                                        'Manrope',
-                                                                    color: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .primaryText,
-                                                                    letterSpacing:
-                                                                        0.0,
-                                                                  ),
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .start,
-                                                              validator: _model
-                                                                  .textControllerValidator
-                                                                  .asValidator(
-                                                                      context),
-                                                            ),
-                                                          ),
-                                                          Align(
-                                                            alignment:
-                                                                const AlignmentDirectional(
-                                                                    0.84, 0.0),
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                          0.0,
-                                                                          0.0,
-                                                                          16.0,
-                                                                          0.0),
-                                                              child: FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .search,
-                                                                color: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .primary,
-                                                                size: 24.0,
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .start,
+                                                                validator: _model
+                                                                    .textControllerValidator
+                                                                    .asValidator(
+                                                                        context),
                                                               ),
                                                             ),
-                                                          ),
-                                                          if (valueOrDefault<
-                                                              bool>(
-                                                            _model.textController
-                                                                        .text !=
-                                                                    '',
-                                                            false,
-                                                          ))
-                                                            Align(
-                                                              alignment:
-                                                                  const AlignmentDirectional(
-                                                                      0.9, 0.0),
-                                                              child: Padding(
-                                                                padding:
-                                                                    const EdgeInsetsDirectional
-                                                                        .fromSTEB(
-                                                                            5.0,
-                                                                            0.0,
-                                                                            0.0,
-                                                                            0.0),
-                                                                child: InkWell(
-                                                                  splashColor:
-                                                                      Colors
-                                                                          .transparent,
-                                                                  focusColor: Colors
-                                                                      .transparent,
-                                                                  hoverColor: Colors
-                                                                      .transparent,
-                                                                  highlightColor:
-                                                                      Colors
-                                                                          .transparent,
-                                                                  onTap:
-                                                                      () async {
-                                                                    _model.isShowFullList =
-                                                                        true;
-                                                                    setState(
-                                                                        () {});
-                                                                    setState(
-                                                                        () {
-                                                                      _model
-                                                                          .textController
-                                                                          ?.clear();
-                                                                    });
-                                                                    await actions
-                                                                        .resetAllFilters(
-                                                                      context,
-                                                                    );
-                                                                  },
-                                                                  child: Icon(
-                                                                    Icons.close,
-                                                                    color: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .primary,
-                                                                    size: 30.0,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                        ],
+                                                          ],
+                                                        ),
                                                       ),
                                                     ),
                                                     Padding(
@@ -3464,173 +3455,6 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                   ),
                                                                 ),
                                                               ),
-                                                              FFButtonWidget(
-                                                                onPressed:
-                                                                    () async {
-                                                                  _model.idx =
-                                                                      0;
-                                                                  setState(
-                                                                      () {});
-                                                                  while (_model
-                                                                          .idx! <
-                                                                      FFAppState()
-                                                                          .Recordlist
-                                                                          .length) {
-                                                                    FFAppState()
-                                                                        .updateRecordlistAtIndex(
-                                                                      _model
-                                                                          .idx!,
-                                                                      (e) => e
-                                                                        ..check = _model.chkAll
-                                                                            ? false
-                                                                            : true,
-                                                                    );
-                                                                    FFAppState()
-                                                                        .update(
-                                                                            () {});
-                                                                    _model.idx =
-                                                                        _model.idx! +
-                                                                            1;
-                                                                    setState(
-                                                                        () {});
-                                                                  }
-                                                                  _model.chkAll =
-                                                                      !_model
-                                                                          .chkAll;
-                                                                  setState(
-                                                                      () {});
-                                                                },
-                                                                text: '',
-                                                                icon: Icon(
-                                                                  Icons
-                                                                      .checklist_sharp,
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .primary,
-                                                                  size: 27.0,
-                                                                ),
-                                                                options:
-                                                                    FFButtonOptions(
-                                                                  width: 50.0,
-                                                                  height: 40.0,
-                                                                  padding: const EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                          0.0,
-                                                                          0.0,
-                                                                          0.0,
-                                                                          0.0),
-                                                                  iconPadding: const EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                          0.0,
-                                                                          0.0,
-                                                                          0.0,
-                                                                          0.0),
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .secondaryBackground,
-                                                                  textStyle: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .titleSmall
-                                                                      .override(
-                                                                        fontFamily:
-                                                                            'Manrope',
-                                                                        color: FlutterFlowTheme.of(context)
-                                                                            .secondaryBackground,
-                                                                        letterSpacing:
-                                                                            0.0,
-                                                                      ),
-                                                                  elevation:
-                                                                      0.0,
-                                                                  borderSide:
-                                                                      BorderSide(
-                                                                    color: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .secondaryBackground,
-                                                                    width: 0.0,
-                                                                  ),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              24.0),
-                                                                ),
-                                                              ),
-                                                              Align(
-                                                                alignment:
-                                                                    const AlignmentDirectional(
-                                                                        1.0,
-                                                                        0.0),
-                                                                child: Padding(
-                                                                  padding: const EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                          0.0,
-                                                                          0.0,
-                                                                          15.0,
-                                                                          0.0),
-                                                                  child:
-                                                                      InkWell(
-                                                                    splashColor:
-                                                                        Colors
-                                                                            .transparent,
-                                                                    focusColor:
-                                                                        Colors
-                                                                            .transparent,
-                                                                    hoverColor:
-                                                                        Colors
-                                                                            .transparent,
-                                                                    highlightColor:
-                                                                        Colors
-                                                                            .transparent,
-                                                                    onTap:
-                                                                        () async {
-                                                                      var confirmDialogResponse = await showDialog<
-                                                                              bool>(
-                                                                            context:
-                                                                                context,
-                                                                            builder:
-                                                                                (alertDialogContext) {
-                                                                              return AlertDialog(
-                                                                                title: const Text('Delete?'),
-                                                                                content: const Text('Do you want to delete this item?'),
-                                                                                actions: [
-                                                                                  TextButton(
-                                                                                    onPressed: () => Navigator.pop(alertDialogContext, false),
-                                                                                    child: const Text('Cancel'),
-                                                                                  ),
-                                                                                  TextButton(
-                                                                                    onPressed: () => Navigator.pop(alertDialogContext, true),
-                                                                                    child: const Text('Delete'),
-                                                                                  ),
-                                                                                ],
-                                                                              );
-                                                                            },
-                                                                          ) ??
-                                                                          false;
-                                                                      if (confirmDialogResponse) {
-                                                                        await actions
-                                                                            .removeRecordItem(
-                                                                          context,
-                                                                        );
-                                                                        await actions
-                                                                            .refreshListView(
-                                                                          context,
-                                                                        );
-                                                                      }
-                                                                    },
-                                                                    child: Icon(
-                                                                      Icons
-                                                                          .delete,
-                                                                      color: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .primary,
-                                                                      size:
-                                                                          27.0,
-                                                                    ),
-                                                                  ).animateOnActionTrigger(
-                                                                    animationsMap[
-                                                                        'iconOnActionTriggerAnimation']!,
-                                                                  ),
-                                                                ),
-                                                              ),
                                                             ],
                                                           ),
                                                         ),
@@ -3668,217 +3492,161 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                               final favoriteItem =
                                                                   favorite[
                                                                       favoriteIndex];
-                                                              return Visibility(
-                                                                visible:
-                                                                    dateTimeFormat(
-                                                                          'yMd',
-                                                                          favoriteItem
-                                                                              .date,
-                                                                          locale:
-                                                                              FFLocalizations.of(context).languageCode,
-                                                                        ) ==
-                                                                        dateTimeFormat(
-                                                                          'yMd',
-                                                                          _model
-                                                                              .calendarSelectedDay1
-                                                                              ?.start,
-                                                                          locale:
-                                                                              FFLocalizations.of(context).languageCode,
-                                                                        ),
-                                                                child: Padding(
-                                                                  padding: const EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                          16.0,
-                                                                          0.0,
-                                                                          16.0,
-                                                                          12.0),
-                                                                  child:
-                                                                      InkWell(
-                                                                    splashColor:
-                                                                        Colors
-                                                                            .transparent,
-                                                                    focusColor:
-                                                                        Colors
-                                                                            .transparent,
-                                                                    hoverColor:
-                                                                        Colors
-                                                                            .transparent,
-                                                                    highlightColor:
-                                                                        Colors
-                                                                            .transparent,
-                                                                    onTap:
-                                                                        () async {
-                                                                      FFAppState()
-                                                                              .currentURL =
-                                                                          favoriteItem
-                                                                              .audiofile;
-                                                                      setState(
-                                                                          () {});
-                                                                      await showModalBottomSheet(
-                                                                        isScrollControlled:
-                                                                            true,
-                                                                        backgroundColor:
-                                                                            Colors.transparent,
-                                                                        enableDrag:
-                                                                            false,
-                                                                        context:
-                                                                            context,
-                                                                        builder:
-                                                                            (context) {
-                                                                          return GestureDetector(
-                                                                            onTap: () => _model.unfocusNode.canRequestFocus
-                                                                                ? FocusScope.of(context).requestFocus(_model.unfocusNode)
-                                                                                : FocusScope.of(context).unfocus(),
+                                                              return Padding(
+                                                                padding: const EdgeInsetsDirectional
+                                                                    .fromSTEB(
+                                                                        16.0,
+                                                                        0.0,
+                                                                        16.0,
+                                                                        12.0),
+                                                                child: InkWell(
+                                                                  splashColor:
+                                                                      Colors
+                                                                          .transparent,
+                                                                  focusColor: Colors
+                                                                      .transparent,
+                                                                  hoverColor: Colors
+                                                                      .transparent,
+                                                                  highlightColor:
+                                                                      Colors
+                                                                          .transparent,
+                                                                  onTap:
+                                                                      () async {
+                                                                    FFAppState()
+                                                                            .currentURL =
+                                                                        favoriteItem
+                                                                            .audiofile;
+                                                                    setState(
+                                                                        () {});
+                                                                    await showModalBottomSheet(
+                                                                      isScrollControlled:
+                                                                          true,
+                                                                      backgroundColor:
+                                                                          Colors
+                                                                              .transparent,
+                                                                      enableDrag:
+                                                                          false,
+                                                                      context:
+                                                                          context,
+                                                                      builder:
+                                                                          (context) {
+                                                                        return GestureDetector(
+                                                                          onTap: () => _model.unfocusNode.canRequestFocus
+                                                                              ? FocusScope.of(context).requestFocus(_model.unfocusNode)
+                                                                              : FocusScope.of(context).unfocus(),
+                                                                          child:
+                                                                              Padding(
+                                                                            padding:
+                                                                                MediaQuery.viewInsetsOf(context),
                                                                             child:
-                                                                                Padding(
-                                                                              padding: MediaQuery.viewInsetsOf(context),
-                                                                              child: NoteWidget(
-                                                                                jms: favoriteItem.date!,
-                                                                              ),
+                                                                                NoteWidget(
+                                                                              jms: favoriteItem.date!,
                                                                             ),
-                                                                          );
-                                                                        },
-                                                                      ).then((value) =>
-                                                                          safeSetState(
-                                                                              () {}));
-                                                                    },
+                                                                          ),
+                                                                        );
+                                                                      },
+                                                                    ).then((value) =>
+                                                                        safeSetState(
+                                                                            () {}));
+                                                                  },
+                                                                  child:
+                                                                      Container(
+                                                                    width:
+                                                                        100.0,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      color: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .secondaryBackground,
+                                                                      boxShadow: const [
+                                                                        BoxShadow(
+                                                                          blurRadius:
+                                                                              3.0,
+                                                                          color:
+                                                                              Color(0x33000000),
+                                                                          offset:
+                                                                              Offset(
+                                                                            0.0,
+                                                                            1.0,
+                                                                          ),
+                                                                        )
+                                                                      ],
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              8.0),
+                                                                    ),
                                                                     child:
-                                                                        Container(
-                                                                      width:
-                                                                          100.0,
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        color: FlutterFlowTheme.of(context)
-                                                                            .secondaryBackground,
-                                                                        boxShadow: const [
-                                                                          BoxShadow(
-                                                                            blurRadius:
-                                                                                3.0,
-                                                                            color:
-                                                                                Color(0x33000000),
-                                                                            offset:
-                                                                                Offset(
-                                                                              0.0,
-                                                                              1.0,
-                                                                            ),
-                                                                          )
-                                                                        ],
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(8.0),
-                                                                      ),
+                                                                        Padding(
+                                                                      padding: const EdgeInsetsDirectional.fromSTEB(
+                                                                          2.0,
+                                                                          8.0,
+                                                                          2.0,
+                                                                          8.0),
                                                                       child:
-                                                                          Padding(
-                                                                        padding: const EdgeInsetsDirectional.fromSTEB(
-                                                                            2.0,
-                                                                            8.0,
-                                                                            2.0,
-                                                                            8.0),
-                                                                        child:
-                                                                            Row(
-                                                                          mainAxisSize:
-                                                                              MainAxisSize.max,
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.spaceBetween,
-                                                                          children: [
-                                                                            Column(
-                                                                              mainAxisSize: MainAxisSize.max,
-                                                                              mainAxisAlignment: MainAxisAlignment.center,
-                                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                                              children: [
-                                                                                Container(
-                                                                                  width: 277.0,
-                                                                                  height: 28.0,
-                                                                                  decoration: BoxDecoration(
-                                                                                    color: FlutterFlowTheme.of(context).secondaryBackground,
-                                                                                  ),
+                                                                          Row(
+                                                                        mainAxisSize:
+                                                                            MainAxisSize.max,
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.spaceBetween,
+                                                                        children: [
+                                                                          Column(
+                                                                            mainAxisSize:
+                                                                                MainAxisSize.max,
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.center,
+                                                                            crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                            children: [
+                                                                              Container(
+                                                                                width: 277.0,
+                                                                                height: 40.0,
+                                                                                decoration: BoxDecoration(
+                                                                                  color: FlutterFlowTheme.of(context).secondaryBackground,
+                                                                                ),
+                                                                                child: Padding(
+                                                                                  padding: const EdgeInsets.all(5.0),
                                                                                   child: Row(
                                                                                     mainAxisSize: MainAxisSize.max,
-                                                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                    mainAxisAlignment: MainAxisAlignment.start,
                                                                                     children: [
-                                                                                      Padding(
-                                                                                        padding: const EdgeInsets.all(5.0),
-                                                                                        child: Row(
-                                                                                          mainAxisSize: MainAxisSize.max,
-                                                                                          children: [
-                                                                                            Builder(
-                                                                                              builder: (context) {
-                                                                                                if (favoriteItem.check) {
-                                                                                                  return Align(
-                                                                                                    alignment: const AlignmentDirectional(0.0, 0.0),
-                                                                                                    child: Padding(
-                                                                                                      padding: const EdgeInsetsDirectional.fromSTEB(2.0, 0.0, 0.0, 0.0),
-                                                                                                      child: InkWell(
-                                                                                                        splashColor: Colors.transparent,
-                                                                                                        focusColor: Colors.transparent,
-                                                                                                        hoverColor: Colors.transparent,
-                                                                                                        highlightColor: Colors.transparent,
-                                                                                                        onTap: () async {
-                                                                                                          FFAppState().updateRecordlistAtIndex(
-                                                                                                            favoriteIndex,
-                                                                                                            (e) => e..check = false,
-                                                                                                          );
-                                                                                                          setState(() {});
-                                                                                                        },
-                                                                                                        child: Container(
-                                                                                                          width: 18.0,
-                                                                                                          height: 18.0,
-                                                                                                          decoration: BoxDecoration(
-                                                                                                            borderRadius: BorderRadius.circular(0.0),
-                                                                                                            shape: BoxShape.rectangle,
-                                                                                                            border: Border.all(
-                                                                                                              color: FlutterFlowTheme.of(context).primary,
-                                                                                                              width: 2.0,
-                                                                                                            ),
-                                                                                                          ),
-                                                                                                          alignment: const AlignmentDirectional(-1.0, 0.0),
-                                                                                                          child: Align(
-                                                                                                            alignment: const AlignmentDirectional(0.0, 0.0),
-                                                                                                            child: FaIcon(
-                                                                                                              FontAwesomeIcons.check,
-                                                                                                              color: FlutterFlowTheme.of(context).primary,
-                                                                                                              size: 14.0,
-                                                                                                            ),
-                                                                                                          ),
-                                                                                                        ),
-                                                                                                      ),
-                                                                                                    ),
-                                                                                                  );
-                                                                                                } else {
-                                                                                                  return Padding(
-                                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(2.0, 0.0, 0.0, 0.0),
-                                                                                                    child: InkWell(
-                                                                                                      splashColor: Colors.transparent,
-                                                                                                      focusColor: Colors.transparent,
-                                                                                                      hoverColor: Colors.transparent,
-                                                                                                      highlightColor: Colors.transparent,
-                                                                                                      onTap: () async {
-                                                                                                        FFAppState().updateRecordlistAtIndex(
-                                                                                                          favoriteIndex,
-                                                                                                          (e) => e..check = true,
-                                                                                                        );
-                                                                                                        setState(() {});
-                                                                                                      },
-                                                                                                      child: Container(
-                                                                                                        width: 18.0,
-                                                                                                        height: 18.0,
-                                                                                                        decoration: BoxDecoration(
-                                                                                                          borderRadius: BorderRadius.circular(0.0),
-                                                                                                          shape: BoxShape.rectangle,
-                                                                                                          border: Border.all(
-                                                                                                            color: FlutterFlowTheme.of(context).primary,
-                                                                                                            width: 2.0,
-                                                                                                          ),
-                                                                                                        ),
-                                                                                                      ),
-                                                                                                    ),
-                                                                                                  );
-                                                                                                }
-                                                                                              },
+                                                                                      Container(
+                                                                                        width: 38.0,
+                                                                                        height: 40.0,
+                                                                                        decoration: BoxDecoration(
+                                                                                          color: FlutterFlowTheme.of(context).secondaryBackground,
+                                                                                        ),
+                                                                                        child: FFButtonWidget(
+                                                                                          onPressed: () {
+                                                                                            print('Button pressed ...');
+                                                                                          },
+                                                                                          text: '',
+                                                                                          icon: Icon(
+                                                                                            Icons.star,
+                                                                                            color: FlutterFlowTheme.of(context).primary,
+                                                                                            size: 25.0,
+                                                                                          ),
+                                                                                          options: FFButtonOptions(
+                                                                                            width: 50.0,
+                                                                                            height: 85.0,
+                                                                                            padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                                                                                            iconPadding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                                                                                            color: FlutterFlowTheme.of(context).secondaryBackground,
+                                                                                            textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                                                                                                  fontFamily: 'Manrope',
+                                                                                                  color: Colors.white,
+                                                                                                  letterSpacing: 0.0,
+                                                                                                ),
+                                                                                            elevation: 0.0,
+                                                                                            borderSide: BorderSide(
+                                                                                              color: FlutterFlowTheme.of(context).secondaryBackground,
+                                                                                              width: 0.0,
                                                                                             ),
-                                                                                          ],
+                                                                                            borderRadius: BorderRadius.circular(8.0),
+                                                                                            hoverTextColor: FlutterFlowTheme.of(context).primary,
+                                                                                          ),
                                                                                         ),
                                                                                       ),
-                                                                                      Expanded(
+                                                                                      Flexible(
                                                                                         child: Container(
                                                                                           height: 25.0,
                                                                                           decoration: BoxDecoration(
@@ -3891,7 +3659,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                             ),
                                                                                           ),
                                                                                           child: Padding(
-                                                                                            padding: const EdgeInsetsDirectional.fromSTEB(10.0, 0.0, 0.0, 0.0),
+                                                                                            padding: const EdgeInsetsDirectional.fromSTEB(0.0, 5.0, 0.0, 0.0),
                                                                                             child: Text(
                                                                                               valueOrDefault<String>(
                                                                                                 favoriteItem.name,
@@ -3955,108 +3723,62 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                     ],
                                                                                   ),
                                                                                 ),
-                                                                                Padding(
-                                                                                  padding: const EdgeInsetsDirectional.fromSTEB(0.0, 4.0, 0.0, 0.0),
-                                                                                  child: Row(
-                                                                                    mainAxisSize: MainAxisSize.max,
-                                                                                    children: [
-                                                                                      Container(
-                                                                                        width: 38.0,
-                                                                                        height: 40.0,
-                                                                                        decoration: BoxDecoration(
-                                                                                          color: FlutterFlowTheme.of(context).secondaryBackground,
+                                                                              ),
+                                                                              Padding(
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(0.0, 4.0, 0.0, 0.0),
+                                                                                child: Row(
+                                                                                  mainAxisSize: MainAxisSize.max,
+                                                                                  children: [
+                                                                                    Container(
+                                                                                      width: 38.0,
+                                                                                      height: 40.0,
+                                                                                      decoration: BoxDecoration(
+                                                                                        color: FlutterFlowTheme.of(context).secondaryBackground,
+                                                                                      ),
+                                                                                    ),
+                                                                                    Padding(
+                                                                                      padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 5.0, 0.0),
+                                                                                      child: Card(
+                                                                                        clipBehavior: Clip.antiAliasWithSaveLayer,
+                                                                                        color: FlutterFlowTheme.of(context).accent3,
+                                                                                        elevation: 0.0,
+                                                                                        shape: RoundedRectangleBorder(
+                                                                                          borderRadius: BorderRadius.circular(8.0),
                                                                                         ),
-                                                                                        child: FFButtonWidget(
-                                                                                          onPressed: () async {
-                                                                                            var confirmDialogResponse = await showDialog<bool>(
-                                                                                                  context: context,
-                                                                                                  builder: (alertDialogContext) {
-                                                                                                    return AlertDialog(
-                                                                                                      title: const Text('Remove?'),
-                                                                                                      content: const Text('Do you want to remove this item from your favorites?'),
-                                                                                                      actions: [
-                                                                                                        TextButton(
-                                                                                                          onPressed: () => Navigator.pop(alertDialogContext, false),
-                                                                                                          child: const Text('Cancel'),
-                                                                                                        ),
-                                                                                                        TextButton(
-                                                                                                          onPressed: () => Navigator.pop(alertDialogContext, true),
-                                                                                                          child: const Text('Remove'),
-                                                                                                        ),
-                                                                                                      ],
-                                                                                                    );
-                                                                                                  },
-                                                                                                ) ??
-                                                                                                false;
-                                                                                            if (confirmDialogResponse) {
-                                                                                              FFAppState().favorite = false;
-                                                                                              setState(() {});
-                                                                                              FFAppState().updateRecordlistAtIndex(
-                                                                                                favoriteIndex,
-                                                                                                (e) => e..favorite = FFAppState().favorite,
-                                                                                              );
-                                                                                              setState(() {});
-                                                                                            }
-                                                                                            FFAppState().favorite = false;
-                                                                                            setState(() {});
-                                                                                          },
-                                                                                          text: '',
-                                                                                          icon: Icon(
-                                                                                            Icons.star_outline,
-                                                                                            color: FlutterFlowTheme.of(context).primary,
-                                                                                            size: 25.0,
-                                                                                          ),
-                                                                                          options: FFButtonOptions(
-                                                                                            width: 50.0,
-                                                                                            height: 85.0,
-                                                                                            padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                                                                                            iconPadding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                                                                                            color: FlutterFlowTheme.of(context).secondaryBackground,
-                                                                                            textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                                                                                        child: Padding(
+                                                                                          padding: const EdgeInsetsDirectional.fromSTEB(4.0, 4.0, 4.0, 4.0),
+                                                                                          child: Text(
+                                                                                            dateTimeFormat(
+                                                                                              'relative',
+                                                                                              favoriteItem.date!,
+                                                                                              locale: FFLocalizations.of(context).languageCode,
+                                                                                            ),
+                                                                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                   fontFamily: 'Manrope',
-                                                                                                  color: Colors.white,
+                                                                                                  color: FlutterFlowTheme.of(context).tertiary,
+                                                                                                  fontSize: 13.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                 ),
-                                                                                            elevation: 0.0,
-                                                                                            borderSide: BorderSide(
-                                                                                              color: FlutterFlowTheme.of(context).secondaryBackground,
-                                                                                              width: 0.0,
-                                                                                            ),
-                                                                                            borderRadius: BorderRadius.circular(8.0),
-                                                                                            hoverTextColor: FlutterFlowTheme.of(context).primary,
                                                                                           ),
                                                                                         ),
                                                                                       ),
-                                                                                      Padding(
-                                                                                        padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 5.0, 0.0),
-                                                                                        child: Card(
-                                                                                          clipBehavior: Clip.antiAliasWithSaveLayer,
-                                                                                          color: FlutterFlowTheme.of(context).accent3,
-                                                                                          elevation: 0.0,
-                                                                                          shape: RoundedRectangleBorder(
-                                                                                            borderRadius: BorderRadius.circular(8.0),
-                                                                                          ),
-                                                                                          child: Padding(
-                                                                                            padding: const EdgeInsetsDirectional.fromSTEB(4.0, 4.0, 4.0, 4.0),
-                                                                                            child: Text(
-                                                                                              dateTimeFormat(
-                                                                                                'relative',
-                                                                                                favoriteItem.date!,
-                                                                                                locale: FFLocalizations.of(context).languageCode,
-                                                                                              ),
-                                                                                              style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                    fontFamily: 'Manrope',
-                                                                                                    color: FlutterFlowTheme.of(context).tertiary,
-                                                                                                    fontSize: 13.0,
-                                                                                                    letterSpacing: 0.0,
-                                                                                                  ),
-                                                                                            ),
-                                                                                          ),
-                                                                                        ),
+                                                                                    ),
+                                                                                    Text(
+                                                                                      dateTimeFormat(
+                                                                                        'yMd',
+                                                                                        favoriteItem.date!,
+                                                                                        locale: FFLocalizations.of(context).languageCode,
                                                                                       ),
-                                                                                      Text(
+                                                                                      style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                                                            fontFamily: 'Manrope',
+                                                                                            letterSpacing: 0.0,
+                                                                                          ),
+                                                                                    ),
+                                                                                    Padding(
+                                                                                      padding: const EdgeInsetsDirectional.fromSTEB(4.0, 0.0, 4.0, 0.0),
+                                                                                      child: Text(
                                                                                         dateTimeFormat(
-                                                                                          'yMd',
+                                                                                          'jms',
                                                                                           favoriteItem.date!,
                                                                                           locale: FFLocalizations.of(context).languageCode,
                                                                                         ),
@@ -4065,104 +3787,93 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                               letterSpacing: 0.0,
                                                                                             ),
                                                                                       ),
-                                                                                      Padding(
-                                                                                        padding: const EdgeInsetsDirectional.fromSTEB(4.0, 0.0, 4.0, 0.0),
-                                                                                        child: Text(
-                                                                                          dateTimeFormat(
-                                                                                            'jms',
-                                                                                            favoriteItem.date!,
-                                                                                            locale: FFLocalizations.of(context).languageCode,
-                                                                                          ),
-                                                                                          style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                                                                fontFamily: 'Manrope',
-                                                                                                letterSpacing: 0.0,
-                                                                                              ),
-                                                                                        ),
-                                                                                      ),
-                                                                                    ],
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                          Align(
+                                                                            alignment:
+                                                                                const AlignmentDirectional(1.0, 0.0),
+                                                                            child:
+                                                                                Padding(
+                                                                              padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 10.0, 0.0),
+                                                                              child: Container(
+                                                                                width: 50.0,
+                                                                                height: 50.0,
+                                                                                decoration: BoxDecoration(
+                                                                                  color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                  borderRadius: BorderRadius.circular(8.0),
+                                                                                  shape: BoxShape.rectangle,
+                                                                                  border: Border.all(
+                                                                                    color: FlutterFlowTheme.of(context).alternate,
+                                                                                    width: 1.0,
                                                                                   ),
                                                                                 ),
-                                                                              ],
-                                                                            ),
-                                                                            Align(
-                                                                              alignment: const AlignmentDirectional(1.0, 0.0),
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 10.0, 0.0),
-                                                                                child: Container(
-                                                                                  width: 50.0,
-                                                                                  height: 50.0,
-                                                                                  decoration: BoxDecoration(
-                                                                                    color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                    borderRadius: BorderRadius.circular(8.0),
-                                                                                    shape: BoxShape.rectangle,
-                                                                                    border: Border.all(
-                                                                                      color: FlutterFlowTheme.of(context).alternate,
-                                                                                      width: 1.0,
-                                                                                    ),
-                                                                                  ),
-                                                                                  alignment: const AlignmentDirectional(0.0, 0.0),
-                                                                                  child: InkWell(
-                                                                                    splashColor: Colors.transparent,
-                                                                                    focusColor: Colors.transparent,
-                                                                                    hoverColor: Colors.transparent,
-                                                                                    highlightColor: Colors.transparent,
-                                                                                    onTap: () async {
-                                                                                      _model.recordedfile3 = await actions.pathToFile(
-                                                                                        favoriteItem.audiofile,
-                                                                                      );
-                                                                                      await Future.wait([
-                                                                                        Future(() async {
-                                                                                          _model.apiRequestBuildship2 = await TranscribeMeetingCall.call(
-                                                                                            buffer: _model.recordedfile3,
-                                                                                            startTime: _model.startTime?.toString(),
-                                                                                            endTime: _model.endTime?.toString(),
-                                                                                          );
-                                                                                          if ((_model.apiRequestBuildship2?.succeeded ?? true)) {
-                                                                                            _model.responseReceived = true;
-                                                                                            setState(() {});
-                                                                                            FFAppState().addToItems(ItemStruct.maybeFromMap((_model.apiRequestBuildship2?.jsonBody ?? ''))!);
-                                                                                            setState(() {});
-                                                                                          } else {
-                                                                                            _model.responseReceived = true;
-                                                                                            setState(() {});
-                                                                                            ScaffoldMessenger.of(context).showSnackBar(
-                                                                                              SnackBar(
-                                                                                                content: Text(
-                                                                                                  'Error getting transcription: ${(_model.apiRequestBuildship2?.statusCode ?? 200).toString()}',
-                                                                                                  style: TextStyle(
-                                                                                                    color: FlutterFlowTheme.of(context).primaryText,
-                                                                                                  ),
-                                                                                                ),
-                                                                                                duration: const Duration(milliseconds: 4000),
-                                                                                                backgroundColor: FlutterFlowTheme.of(context).secondary,
-                                                                                              ),
-                                                                                            );
-                                                                                          }
-                                                                                        }),
-                                                                                        Future(() async {
-                                                                                          setState(() {
-                                                                                            _model.tabBarController1!.animateTo(
-                                                                                              min(_model.tabBarController1!.length - 1, _model.tabBarController1!.index + 1),
-                                                                                              duration: const Duration(milliseconds: 300),
-                                                                                              curve: Curves.ease,
-                                                                                            );
-                                                                                          });
-                                                                                        }),
-                                                                                      ]);
+                                                                                alignment: const AlignmentDirectional(0.0, 0.0),
+                                                                                child: InkWell(
+                                                                                  splashColor: Colors.transparent,
+                                                                                  focusColor: Colors.transparent,
+                                                                                  hoverColor: Colors.transparent,
+                                                                                  highlightColor: Colors.transparent,
+                                                                                  onTap: () async {
+                                                                                    _model.recordedfile3 = await actions.pathToFile(
+                                                                                      favoriteItem.audiofile,
+                                                                                    );
+                                                                                    await Future.wait([
+                                                                                      Future(() async {
+                                                                                        _model.apiRequestBuildship2 = await TranscribeMeetingCall.call(
+                                                                                          buffer: _model.recordedfile3,
+                                                                                          startTime: _model.startTime?.toString(),
+                                                                                          endTime: _model.endTime?.toString(),
+                                                                                        );
 
-                                                                                      setState(() {});
-                                                                                    },
-                                                                                    child: Icon(
-                                                                                      Icons.text_fields,
-                                                                                      color: FlutterFlowTheme.of(context).primaryText,
-                                                                                      size: 24.0,
-                                                                                    ),
+                                                                                        if ((_model.apiRequestBuildship2?.succeeded ?? true)) {
+                                                                                          _model.responseReceived = true;
+                                                                                          setState(() {});
+                                                                                          FFAppState().addToItems(ItemStruct.maybeFromMap((_model.apiRequestBuildship2?.jsonBody ?? ''))!);
+                                                                                          setState(() {});
+                                                                                        } else {
+                                                                                          _model.responseReceived = true;
+                                                                                          setState(() {});
+                                                                                          ScaffoldMessenger.of(context).showSnackBar(
+                                                                                            SnackBar(
+                                                                                              content: Text(
+                                                                                                'Error getting transcription: ${(_model.apiRequestBuildship2?.statusCode ?? 200).toString()}',
+                                                                                                style: TextStyle(
+                                                                                                  color: FlutterFlowTheme.of(context).primaryText,
+                                                                                                ),
+                                                                                              ),
+                                                                                              duration: const Duration(milliseconds: 4000),
+                                                                                              backgroundColor: FlutterFlowTheme.of(context).secondary,
+                                                                                            ),
+                                                                                          );
+                                                                                        }
+                                                                                      }),
+                                                                                      Future(() async {
+                                                                                        setState(() {
+                                                                                          _model.tabBarController1!.animateTo(
+                                                                                            min(_model.tabBarController1!.length - 1, _model.tabBarController1!.index + 1),
+                                                                                            duration: const Duration(milliseconds: 300),
+                                                                                            curve: Curves.ease,
+                                                                                          );
+                                                                                        });
+                                                                                      }),
+                                                                                    ]);
+
+                                                                                    setState(() {});
+                                                                                  },
+                                                                                  child: Icon(
+                                                                                    Icons.text_fields,
+                                                                                    color: FlutterFlowTheme.of(context).primaryText,
+                                                                                    size: 24.0,
                                                                                   ),
                                                                                 ),
                                                                               ),
                                                                             ),
-                                                                          ],
-                                                                        ),
+                                                                          ),
+                                                                        ],
                                                                       ),
                                                                     ),
                                                                   ),

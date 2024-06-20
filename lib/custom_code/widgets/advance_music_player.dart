@@ -51,8 +51,8 @@ class AdvanceMusicPlayer extends StatefulWidget {
     required this.speakerOffIconColor,
     required this.dropdownTextColor,
     required this.timerIcon,
-    required this.waveformIconPath, // 추가된 부분
-    required this.waveformIconColor, // 추가된 부분
+    required this.waveformIconPath,
+    required this.waveformIconColor,
   }) : super(key: key);
 
   final double? width;
@@ -86,8 +86,8 @@ class AdvanceMusicPlayer extends StatefulWidget {
   final Color speakerOffIconColor;
   final Color dropdownTextColor;
   final Widget timerIcon;
-  final Widget waveformIconPath; // 추가된 부분
-  final Color waveformIconColor; // 추가된 부분
+  final Widget waveformIconPath;
+  final Color waveformIconColor;
 
   @override
   _AdvanceMusicPlayerState createState() => _AdvanceMusicPlayerState();
@@ -103,7 +103,7 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
   bool isLooping = false;
   bool isShuffling = false;
   bool isSpeakerOn = true;
-  bool showWaveform = false; // 추가된 부분: 파형 표시 여부를 위한 상태 변수
+  bool showWaveform = false;
   String playbackSpeed = 'Normal';
   String currentRecordingName = 'Unknown';
   Map<String, double> speedValues = {
@@ -157,7 +157,6 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
         playNext();
       }
 
-      // Update currentURL
       if (state.playing) {
         setState(() {
           FFAppState().currentURL = widget.musicUrls[currentSongIndex];
@@ -169,7 +168,7 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
       setState(() {
         currentPosition = position;
       });
-      // Check if the selected timer is complete
+
       if (selectedTimer != null && currentPosition >= selectedTimer!) {
         audioPlayer.pause();
         setState(() {
@@ -195,9 +194,8 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
     try {
       await audioPlayer.setUrl(widget.initialUrl);
       setState(() {
-        FFAppState().currentURL = widget.initialUrl; // Update currentURL
-        currentRecordingName =
-            getCurrentRecordingName(); // Set initial recording name
+        FFAppState().currentURL = widget.initialUrl;
+        currentRecordingName = getCurrentRecordingName();
       });
       _initWaveform(widget.initialUrl);
     } catch (error) {
@@ -252,15 +250,7 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
     if (isPlaying) {
       audioPlayer.pause();
     } else {
-      setState(() {
-        FFAppState().currentURL = widget.musicUrls[currentSongIndex];
-      });
-
-      audioPlayer.play().then((_) {
-        setState(() {
-          currentRecordingName = getCurrentRecordingName();
-        });
-      });
+      audioPlayer.play();
     }
   }
 
@@ -303,7 +293,7 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
     try {
       await audioPlayer.setUrl(url);
       setState(() {
-        FFAppState().currentURL = url; // Update currentURL
+        FFAppState().currentURL = url;
         currentRecordingName = getCurrentRecordingName();
       });
       _initWaveform(url);
@@ -337,7 +327,6 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
   }
 
   void toggleWaveform() {
-    // 추가된 부분: 파형 표시 토글 함수
     setState(() {
       showWaveform = !showWaveform;
     });
@@ -361,7 +350,7 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
     setState(() {
       selectedTimer = duration;
       if (duration == Duration.zero) {
-        audioPlayer.pause(); // Pause the player if the selected timer is 0
+        audioPlayer.pause();
       }
       Navigator.pop(context);
     });
@@ -432,11 +421,11 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
               ],
             ),
             SizedBox(height: 8),
-            if (showWaveform) // 추가된 부분: 파형 표시 여부에 따라 조건부 렌더링
+            if (showWaveform)
               Container(
                 height: 150.0,
                 decoration: BoxDecoration(
-                  color: Color(0xFFFFFFFF), // 배경색: #FFFFFF
+                  color: Color(0xFFFFFFFF),
                   borderRadius: const BorderRadius.all(Radius.circular(20.0)),
                 ),
                 padding: const EdgeInsets.all(16.0),
@@ -476,7 +465,7 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
                       start: actualStart,
                       duration: visibleDuration,
                       currentPosition: currentPosition,
-                      waveColor: Color(0xFF9489F5), // 파형 색상: #9489F5
+                      waveColor: Color(0xFF9489F5),
                     );
                   },
                 ),
@@ -555,8 +544,7 @@ class _AdvanceMusicPlayerState extends State<AdvanceMusicPlayer>
                       : widget.shuffleIconPath,
                 ),
                 IconButton(
-                  // 추가된 부분: 파형 토글 버튼
-                  icon: widget.waveformIconPath, // 아이콘 경로를 파라미터에서 받음
+                  icon: widget.waveformIconPath,
                   color: widget.waveformIconColor,
                   iconSize: 30.0,
                   onPressed: toggleWaveform,
@@ -710,7 +698,6 @@ class AudioWaveformPainter extends CustomPainter {
       );
     }
 
-    // 현재 재생 위치 표시
     final playPosition = currentPosition - start;
     if (playPosition >= Duration.zero && playPosition <= duration) {
       final playX =

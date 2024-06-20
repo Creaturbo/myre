@@ -18,10 +18,10 @@
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint --max-warnings=0 .",
-    "serve": "firebase -P audio-recorder-app-75hh4n emulators:start --only functions",
-    "shell": "firebase -P audio-recorder-app-75hh4n functions:shell",
+    "serve": "firebase -P realvoicetest2-aoj7hs emulators:start --only functions",
+    "shell": "firebase -P realvoicetest2-aoj7hs functions:shell",
     "start": "npm run shell",
-    "logs": "firebase -P audio-recorder-app-75hh4n functions:log",
+    "logs": "firebase -P realvoicetest2-aoj7hs functions:log",
     "compile": "cp ../../tsconfig.template.json ./tsconfig-compile.json && tsc --project tsconfig-compile.json"
   },
   "engines": {

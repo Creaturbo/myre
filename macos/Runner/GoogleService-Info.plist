@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyA9_OHZil8mBaDlK-Z6ra1TJ0_7ZjrntzQ</string>
+	<string>AIzaSyCWaQnDIUiL-wCfZ7Zjz2B32FLf_cZnnws</string>
 	<key>GCM_SENDER_ID</key>
-	<string>506533620321</string>
+	<string>290834340712</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.connectio.meetings</string>
 	<key>PROJECT_ID</key>
-	<string>audio-recorder-app-75hh4n</string>
+	<string>realvoicetest2-aoj7hs</string>
 	<key>STORAGE_BUCKET</key>
-	<string>audio-recorder-app-75hh4n.appspot.com</string>
+	<string>realvoicetest2-aoj7hs.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:506533620321:ios:a74e73ddfdb6bb4a919820</string>
+	<string>1:290834340712:ios:292d88a080bfe72b3c54dd</string>
 </dict>
 </plist>

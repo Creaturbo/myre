@@ -5,12 +5,12 @@ Future initFirebase() async {
   if (kIsWeb) {
     await Firebase.initializeApp(
         options: const FirebaseOptions(
-            apiKey: "AIzaSyC6HuG0TLrcwkf2qRKbG5d7phUbv57dr-4",
-            authDomain: "audio-recorder-app-75hh4n.firebaseapp.com",
-            projectId: "audio-recorder-app-75hh4n",
-            storageBucket: "audio-recorder-app-75hh4n.appspot.com",
-            messagingSenderId: "506533620321",
-            appId: "1:506533620321:web:812272338344af47919820"));
+            apiKey: "AIzaSyAU0_i8Act61wYdOHP7FfKnlTVnUGT8Fr4",
+            authDomain: "realvoicetest2-aoj7hs.firebaseapp.com",
+            projectId: "realvoicetest2-aoj7hs",
+            storageBucket: "realvoicetest2-aoj7hs.appspot.com",
+            messagingSenderId: "290834340712",
+            appId: "1:290834340712:web:67006386b4c1c16c3c54dd"));
   } else {
     await Firebase.initializeApp();
   }

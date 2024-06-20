@@ -18,3 +18,4 @@ export 'reset_all_filters.dart' show resetAllFilters;
 export 'stop_auto_delete_for_checked_items.dart'
     show stopAutoDeleteForCheckedItems;
 export 'share_audio_file.dart' show shareAudioFile;
+export 'fremove_record_item.dart' show fremoveRecordItem;
