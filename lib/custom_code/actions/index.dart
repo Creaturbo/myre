@@ -19,3 +19,6 @@ export 'stop_auto_delete_for_checked_items.dart'
     show stopAutoDeleteForCheckedItems;
 export 'share_audio_file.dart' show shareAudioFile;
 export 'fremove_record_item.dart' show fremoveRecordItem;
+export 'enable_background_execution.dart' show enableBackgroundExecution;
+export 'initialize_foreground_service.dart' show initializeForegroundService;
+export 'request_permissions.dart' show requestPermissions;

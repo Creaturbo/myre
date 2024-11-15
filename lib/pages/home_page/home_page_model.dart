@@ -57,7 +57,6 @@ class HomePageModel extends FlutterFlowModel<HomePageWidget> {
 
   ///  State fields for stateful widgets in this page.
 
-  final unfocusNode = FocusNode();
   // State field(s) for TabBar widget.
   TabController? tabBarController1;
   int get tabBarCurrentIndex1 =>
@@ -131,7 +130,6 @@ class HomePageModel extends FlutterFlowModel<HomePageWidget> {
 
   @override
   void dispose() {
-    unfocusNode.dispose();
     tabBarController1?.dispose();
     timerController1.dispose();
     timerController2.dispose();

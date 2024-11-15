@@ -75,6 +75,8 @@
     <string>This app requires permissions to record audio</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
     <string>This app requires Bluetooth access to record audio through a Bluetooth device</string>
+	<key>PermissionGroupNotification</key>
+    <string>This app requires permissions to Notifications</string>
 
 
 	<key>UILaunchStoryboardName</key>

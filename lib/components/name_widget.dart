@@ -35,7 +35,7 @@ class _NameWidgetState extends State<NameWidget> {
     _model.textController ??= TextEditingController();
     _model.textFieldFocusNode ??= FocusNode();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -57,12 +57,12 @@ class _NameWidgetState extends State<NameWidget> {
             widget.parameter1!,
             (e) => e..name = _model.textController.text,
           );
-          setState(() {});
+          safeSetState(() {});
           FFAppState().updateRecordlistAtIndex(
             widget.parameter1!,
             (e) => e..nameedit = false,
           );
-          setState(() {});
+          safeSetState(() {});
         },
         autofocus: true,
         obscureText: false,

@@ -32,7 +32,7 @@ class _TranscribeItemWidgetState extends State<TranscribeItemWidget> {
     super.initState();
     _model = createModel(context, () => TranscribeItemModel());
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override

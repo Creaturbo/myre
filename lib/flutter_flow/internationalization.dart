@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -122,18 +123,47 @@ class FFLocalizations {
   };
 }
 
+/// Used if the locale is not supported by GlobalMaterialLocalizations.
+class FallbackMaterialLocalizationDelegate
+    extends LocalizationsDelegate<MaterialLocalizations> {
+  const FallbackMaterialLocalizationDelegate();
+
+  @override
+  bool isSupported(Locale locale) => _isSupportedLocale(locale);
+
+  @override
+  Future<MaterialLocalizations> load(Locale locale) async =>
+      SynchronousFuture<MaterialLocalizations>(
+        const DefaultMaterialLocalizations(),
+      );
+
+  @override
+  bool shouldReload(FallbackMaterialLocalizationDelegate old) => false;
+}
+
+/// Used if the locale is not supported by GlobalCupertinoLocalizations.
+class FallbackCupertinoLocalizationDelegate
+    extends LocalizationsDelegate<CupertinoLocalizations> {
+  const FallbackCupertinoLocalizationDelegate();
+
+  @override
+  bool isSupported(Locale locale) => _isSupportedLocale(locale);
+
+  @override
+  Future<CupertinoLocalizations> load(Locale locale) =>
+      SynchronousFuture<CupertinoLocalizations>(
+        const DefaultCupertinoLocalizations(),
+      );
+
+  @override
+  bool shouldReload(FallbackCupertinoLocalizationDelegate old) => false;
+}
+
 class FFLocalizationsDelegate extends LocalizationsDelegate<FFLocalizations> {
   const FFLocalizationsDelegate();
 
   @override
-  bool isSupported(Locale locale) {
-    final language = locale.toString();
-    return FFLocalizations.languages().contains(
-      language.endsWith('_')
-          ? language.substring(0, language.length - 1)
-          : language,
-    );
-  }
+  bool isSupported(Locale locale) => _isSupportedLocale(locale);
 
   @override
   Future<FFLocalizations> load(Locale locale) =>
@@ -149,6 +179,15 @@ Locale createLocale(String language) => language.contains('_')
         scriptCode: language.split('_').last,
       )
     : Locale(language);
+
+bool _isSupportedLocale(Locale locale) {
+  final language = locale.toString();
+  return FFLocalizations.languages().contains(
+    language.endsWith('_')
+        ? language.substring(0, language.length - 1)
+        : language,
+  );
+}
 
 final kTranslationsMap = <Map<String, Map<String, String>>>[
   // HomePage
@@ -329,7 +368,7 @@ final kTranslationsMap = <Map<String, Map<String, String>>>[
       'ja':
           '弊社の録音アプリをご利用いただきありがとうございます。\n\nこのアプリでは、24 時間連続録音が可能です。\n\nデフォルトでは、録音は 60 分間隔で保存されます。\n\n録音されたファイルは 1 時間ごとに自動的に削除されます。\n\n保存および削除の希望時間を設定するには、[設定] タブに移動してください。\n\nありがとうございます。',
       'ko':
-          '저희 녹음 앱을 이용해 주셔서 감사합니다.\n\n이 앱을 사용하면 24시간 동안 연속 녹음이 가능합니다.\n\n기본적으로 녹음은 60분 간격으로 저장됩니다. \n녹화된 파일은 매시간 자동으로 삭제됩니다.\n\n원하는 저장 및 삭제 시간을 설정하려면 설정 탭으로 이동하세요.\n\n감사합니다.',
+          '저희 녹음 앱을 이용해 주셔서 감사합니다.\n\n이 앱을 사용하면 24시간 동안 연속 녹음이 가능합니다.\n\n기본적으로 녹음은 60분 간격으로 저장됩니다. \n녹음된 파일은 매시간 자동으로 삭제됩니다.\n\n원하는 저장 및 삭제 시간을 설정하려면 설정 탭으로 이동하세요.\n\n감사합니다.',
       'pt':
           'Obrigado por usar nosso aplicativo de gravação.\n\nEste aplicativo permite gravação contínua por 24 horas.\n\nPor padrão, as gravações são salvas em intervalos de 60 minutos. \nOs arquivos gravados são excluídos automaticamente a cada hora.\n\nPara definir seus horários preferidos para salvar e excluir, vá para a guia Configurações.\n\nObrigado.',
       'ru':
@@ -436,7 +475,7 @@ final kTranslationsMap = <Map<String, Map<String, String>>>[
       'zh_Hant': '環境',
     },
     'i00u8fua': {
-      'en': 'Automatic continuous recording',
+      'en': 'Auto Continuous Recording',
       'ar': 'التسجيل المستمر التلقائي',
       'bn': 'স্বয়ংক্রিয় ক্রমাগত রেকর্ডিং',
       'de': 'Automatische Daueraufzeichnung',
@@ -462,7 +501,7 @@ final kTranslationsMap = <Map<String, Map<String, String>>>[
       'hi': 'पर',
       'it': 'SU',
       'ja': 'の上',
-      'ko': '~에',
+      'ko': '켜기',
       'pt': 'Sobre',
       'ru': 'На',
       'ur': 'پر',
@@ -479,7 +518,7 @@ final kTranslationsMap = <Map<String, Map<String, String>>>[
       'hi': 'बंद',
       'it': 'Spento',
       'ja': 'オフ',
-      'ko': '끄다',
+      'ko': '끄기',
       'pt': 'Desligado',
       'ru': 'Выключенный',
       'ur': 'بند',
@@ -521,7 +560,7 @@ final kTranslationsMap = <Map<String, Map<String, String>>>[
       'zh_Hant': '搜尋一個項目...',
     },
     'y1w8c7dt': {
-      'en': 'Automatic deletion interval (hours)',
+      'en': 'Auto Deletion Interval (hours)',
       'ar': 'الفاصل الزمني للحذف التلقائي (ساعات)',
       'bn': 'স্বয়ংক্রিয়ভাবে মুছে ফেলার ব্যবধান (ঘন্টা)',
       'de': 'Automatisches Löschintervall (Stunden)',
@@ -657,7 +696,7 @@ final kTranslationsMap = <Map<String, Map<String, String>>>[
       'zh_Hant': '搜尋一個項目...',
     },
     'vwe63w5m': {
-      'en': 'Automatic recording interval (minutes)',
+      'en': 'Auto Recording Interval (minutes)',
       'ar': 'الفاصل الزمني للتسجيل التلقائي (بالدقائق)',
       'bn': 'স্বয়ংক্রিয় রেকর্ডিং ব্যবধান (মিনিট)',
       'de': 'Automatisches Aufnahmeintervall (Minuten)',
@@ -877,6 +916,74 @@ final kTranslationsMap = <Map<String, Map<String, String>>>[
           'اس ایپ کو بلوٹوتھ ڈیوائس کے ذریعے آڈیو ریکارڈ کرنے کے لیے بلوٹوتھ تک رسائی درکار ہے۔',
       'zh_Hans': '此应用需要蓝牙访问才能通过蓝牙设备录制音频',
       'zh_Hant': '此應用程式需要藍牙存取才能透過藍牙設備錄製音頻',
+    },
+    '75ygmkm5': {
+      'en': 'This app requires permissions to Notifications',
+      'ar': '',
+      'bn': '',
+      'de': '',
+      'es': '',
+      'fr': '',
+      'hi': '',
+      'it': '',
+      'ja': '',
+      'ko': '',
+      'pt': '',
+      'ru': '',
+      'ur': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'es98xrkv': {
+      'en': 'This app requests permission for continuous audio recording',
+      'ar': '',
+      'bn': '',
+      'de': '',
+      'es': '',
+      'fr': '',
+      'hi': '',
+      'it': '',
+      'ja': '',
+      'ko': '',
+      'pt': '',
+      'ru': '',
+      'ur': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '7c4u5gk9': {
+      'en': 'This app requests permission for continuous audio recording.',
+      'ar': '',
+      'bn': '',
+      'de': '',
+      'es': '',
+      'fr': '',
+      'hi': '',
+      'it': '',
+      'ja': '',
+      'ko': '',
+      'pt': '',
+      'ru': '',
+      'ur': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'abw64y9y': {
+      'en': 'This app requests permission for continuous audio recording.',
+      'ar': '',
+      'bn': '',
+      'de': '',
+      'es': '',
+      'fr': '',
+      'hi': '',
+      'it': '',
+      'ja': '',
+      'ko': '',
+      'pt': '',
+      'ru': '',
+      'ur': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
     },
     '6u8fdo0l': {
       'en': '',

@@ -1,2 +1,3 @@
 NSMicrophoneUsageDescription = "This app requires permissions to record audio";
 NSBluetoothAlwaysUsageDescription = "This app requires Bluetooth access to record audio through a Bluetooth device";
+PermissionGroupNotification = "This app requires permissions to Notifications";

@@ -39,7 +39,7 @@ class _MeetingDetailsWidgetState extends State<MeetingDetailsWidget> {
         TextEditingController(text: widget.item?.transcription);
     _model.shortBioFocusNode ??= FocusNode();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -275,7 +275,7 @@ class _MeetingDetailsWidgetState extends State<MeetingDetailsWidget> {
                               if (confirmDialogResponse) {
                                 Navigator.pop(context);
                                 FFAppState().removeFromItems(widget.item!);
-                                setState(() {});
+                                safeSetState(() {});
                               }
                             },
                           ),

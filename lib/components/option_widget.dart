@@ -31,7 +31,7 @@ class _OptionWidgetState extends State<OptionWidget> {
     super.initState();
     _model = createModel(context, () => OptionModel());
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -145,7 +145,7 @@ class _OptionWidgetState extends State<OptionWidget> {
                                 10.0, 0.0, 0.0, 0.0),
                             child: Text(
                               FFLocalizations.of(context).getText(
-                                'i00u8fua' /* Automatic continuous recording */,
+                                'i00u8fua' /* Auto Continuous Recording */,
                               ),
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
@@ -155,63 +155,67 @@ class _OptionWidgetState extends State<OptionWidget> {
                                   ),
                             ),
                           ),
-                          Align(
-                            alignment: const AlignmentDirectional(0.95, -0.96),
-                            child: FlutterFlowDropDown<bool>(
-                              controller: _model.dropDownValueController1 ??=
-                                  FormFieldController<bool>(
-                                _model.dropDownValue1 ??=
-                                    FFAppState().Signalfactor,
-                              ),
-                              options: List<bool>.from([true, false]),
-                              optionLabels: [
-                                FFLocalizations.of(context).getText(
-                                  'rdz7lhoo' /* On */,
+                          Flexible(
+                            child: Align(
+                              alignment: const AlignmentDirectional(0.95, -0.96),
+                              child: FlutterFlowDropDown<bool>(
+                                controller: _model.dropDownValueController1 ??=
+                                    FormFieldController<bool>(
+                                  _model.dropDownValue1 ??=
+                                      FFAppState().Signalfactor,
                                 ),
-                                FFLocalizations.of(context).getText(
-                                  'kfucbpeh' /* Off */,
-                                )
-                              ],
-                              onChanged: (val) async {
-                                setState(() => _model.dropDownValue1 = val);
-                                if (_model.dropDownValue1 == true) {
-                                  FFAppState().Signalfactor = true;
-                                  setState(() {});
-                                } else {
-                                  FFAppState().Signalfactor = false;
-                                  setState(() {});
-                                }
-                              },
-                              width: 100.0,
-                              height: 50.0,
-                              textStyle: FlutterFlowTheme.of(context)
-                                  .bodyMedium
-                                  .override(
-                                    fontFamily: 'Manrope',
-                                    fontSize: 12.0,
-                                    letterSpacing: 0.0,
+                                options: List<bool>.from([true, false]),
+                                optionLabels: [
+                                  FFLocalizations.of(context).getText(
+                                    'rdz7lhoo' /* On */,
                                   ),
-                              hintText: FFLocalizations.of(context).getText(
-                                'gc3huf1i' /* On/Off */,
+                                  FFLocalizations.of(context).getText(
+                                    'kfucbpeh' /* Off */,
+                                  )
+                                ],
+                                onChanged: (val) async {
+                                  safeSetState(
+                                      () => _model.dropDownValue1 = val);
+                                  if (_model.dropDownValue1 == true) {
+                                    FFAppState().Signalfactor = true;
+                                    safeSetState(() {});
+                                  } else {
+                                    FFAppState().Signalfactor = false;
+                                    safeSetState(() {});
+                                  }
+                                },
+                                width: 100.0,
+                                height: 50.0,
+                                textStyle: FlutterFlowTheme.of(context)
+                                    .bodyMedium
+                                    .override(
+                                      fontFamily: 'Manrope',
+                                      fontSize: 12.0,
+                                      letterSpacing: 0.0,
+                                    ),
+                                hintText: FFLocalizations.of(context).getText(
+                                  'gc3huf1i' /* On/Off */,
+                                ),
+                                icon: Icon(
+                                  Icons.arrow_drop_down_sharp,
+                                  color:
+                                      FlutterFlowTheme.of(context).primaryText,
+                                  size: 24.0,
+                                ),
+                                fillColor: FlutterFlowTheme.of(context)
+                                    .secondaryBackground,
+                                elevation: 2.0,
+                                borderColor: FlutterFlowTheme.of(context)
+                                    .secondaryBackground,
+                                borderWidth: 2.0,
+                                borderRadius: 8.0,
+                                margin: const EdgeInsetsDirectional.fromSTEB(
+                                    16.0, 4.0, 16.0, 4.0),
+                                hidesUnderline: true,
+                                isOverButton: true,
+                                isSearchable: false,
+                                isMultiSelect: false,
                               ),
-                              icon: Icon(
-                                Icons.arrow_drop_down_sharp,
-                                color: FlutterFlowTheme.of(context).primaryText,
-                                size: 24.0,
-                              ),
-                              fillColor: FlutterFlowTheme.of(context)
-                                  .secondaryBackground,
-                              elevation: 2.0,
-                              borderColor: FlutterFlowTheme.of(context)
-                                  .secondaryBackground,
-                              borderWidth: 2.0,
-                              borderRadius: 8.0,
-                              margin: const EdgeInsetsDirectional.fromSTEB(
-                                  16.0, 4.0, 16.0, 4.0),
-                              hidesUnderline: true,
-                              isOverButton: true,
-                              isSearchable: false,
-                              isMultiSelect: false,
                             ),
                           ),
                         ],
@@ -240,7 +244,7 @@ class _OptionWidgetState extends State<OptionWidget> {
                                 10.0, 0.0, 0.0, 0.0),
                             child: Text(
                               FFLocalizations.of(context).getText(
-                                'y1w8c7dt' /* Automatic deletion interval (h... */,
+                                'y1w8c7dt' /* Auto Deletion Interval (hours) */,
                               ),
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
@@ -250,78 +254,82 @@ class _OptionWidgetState extends State<OptionWidget> {
                                   ),
                             ),
                           ),
-                          Align(
-                            alignment: const AlignmentDirectional(0.95, -0.96),
-                            child: FlutterFlowDropDown<String>(
-                              controller: _model.dropDownValueController2 ??=
-                                  FormFieldController<String>(
-                                _model.dropDownValue2 ??=
-                                    valueOrDefault<String>(
-                                  FFAppState().deletetime,
-                                  '1',
-                                ),
-                              ),
-                              options: [
-                                FFLocalizations.of(context).getText(
-                                  'tak53osr' /* 1 */,
-                                ),
-                                FFLocalizations.of(context).getText(
-                                  '15iehxb1' /* 2 */,
-                                ),
-                                FFLocalizations.of(context).getText(
-                                  'zfc0vpyr' /* 3 */,
-                                ),
-                                FFLocalizations.of(context).getText(
-                                  'q6gl5ziv' /* 4 */,
-                                ),
-                                FFLocalizations.of(context).getText(
-                                  '12w50g3d' /* 5 */,
-                                )
-                              ],
-                              onChanged: (val) async {
-                                setState(() => _model.dropDownValue2 = val);
-                                FFAppState().deletetime =
-                                    _model.dropDownValue2!;
-                                setState(() {});
-                                _model.settime =
-                                    await actions.convertHoursToMilliseconds(
-                                  FFAppState().deletetime,
-                                );
-                                FFAppState().settime = _model.settime!;
-                                setState(() {});
-
-                                setState(() {});
-                              },
-                              width: 100.0,
-                              height: 50.0,
-                              textStyle: FlutterFlowTheme.of(context)
-                                  .bodyMedium
-                                  .override(
-                                    fontFamily: 'Manrope',
-                                    fontSize: 12.0,
-                                    letterSpacing: 0.0,
+                          Flexible(
+                            child: Align(
+                              alignment: const AlignmentDirectional(0.95, -0.96),
+                              child: FlutterFlowDropDown<String>(
+                                controller: _model.dropDownValueController2 ??=
+                                    FormFieldController<String>(
+                                  _model.dropDownValue2 ??=
+                                      valueOrDefault<String>(
+                                    FFAppState().deletetime,
+                                    '1',
                                   ),
-                              hintText: FFLocalizations.of(context).getText(
-                                'g4quft4q' /* Hours */,
+                                ),
+                                options: [
+                                  FFLocalizations.of(context).getText(
+                                    'tak53osr' /* 1 */,
+                                  ),
+                                  FFLocalizations.of(context).getText(
+                                    '15iehxb1' /* 2 */,
+                                  ),
+                                  FFLocalizations.of(context).getText(
+                                    'zfc0vpyr' /* 3 */,
+                                  ),
+                                  FFLocalizations.of(context).getText(
+                                    'q6gl5ziv' /* 4 */,
+                                  ),
+                                  FFLocalizations.of(context).getText(
+                                    '12w50g3d' /* 5 */,
+                                  )
+                                ],
+                                onChanged: (val) async {
+                                  safeSetState(
+                                      () => _model.dropDownValue2 = val);
+                                  FFAppState().deletetime =
+                                      _model.dropDownValue2!;
+                                  safeSetState(() {});
+                                  _model.settime =
+                                      await actions.convertHoursToMilliseconds(
+                                    FFAppState().deletetime,
+                                  );
+                                  FFAppState().settime = _model.settime!;
+                                  safeSetState(() {});
+
+                                  safeSetState(() {});
+                                },
+                                width: 100.0,
+                                height: 50.0,
+                                textStyle: FlutterFlowTheme.of(context)
+                                    .bodyMedium
+                                    .override(
+                                      fontFamily: 'Manrope',
+                                      fontSize: 12.0,
+                                      letterSpacing: 0.0,
+                                    ),
+                                hintText: FFLocalizations.of(context).getText(
+                                  'g4quft4q' /* Hours */,
+                                ),
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                  color:
+                                      FlutterFlowTheme.of(context).primaryText,
+                                  size: 24.0,
+                                ),
+                                fillColor: FlutterFlowTheme.of(context)
+                                    .secondaryBackground,
+                                elevation: 2.0,
+                                borderColor: FlutterFlowTheme.of(context)
+                                    .secondaryBackground,
+                                borderWidth: 2.0,
+                                borderRadius: 8.0,
+                                margin: const EdgeInsetsDirectional.fromSTEB(
+                                    16.0, 4.0, 16.0, 4.0),
+                                hidesUnderline: true,
+                                isOverButton: true,
+                                isSearchable: false,
+                                isMultiSelect: false,
                               ),
-                              icon: Icon(
-                                Icons.arrow_drop_down,
-                                color: FlutterFlowTheme.of(context).primaryText,
-                                size: 24.0,
-                              ),
-                              fillColor: FlutterFlowTheme.of(context)
-                                  .secondaryBackground,
-                              elevation: 2.0,
-                              borderColor: FlutterFlowTheme.of(context)
-                                  .secondaryBackground,
-                              borderWidth: 2.0,
-                              borderRadius: 8.0,
-                              margin: const EdgeInsetsDirectional.fromSTEB(
-                                  16.0, 4.0, 16.0, 4.0),
-                              hidesUnderline: true,
-                              isOverButton: true,
-                              isSearchable: false,
-                              isMultiSelect: false,
                             ),
                           ),
                         ],
@@ -350,7 +358,7 @@ class _OptionWidgetState extends State<OptionWidget> {
                                 10.0, 0.0, 0.0, 0.0),
                             child: Text(
                               FFLocalizations.of(context).getText(
-                                'vwe63w5m' /* Automatic recording interval (... */,
+                                'vwe63w5m' /* Auto Recording Interval (minut... */,
                               ),
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
@@ -360,73 +368,80 @@ class _OptionWidgetState extends State<OptionWidget> {
                                   ),
                             ),
                           ),
-                          Align(
-                            alignment: const AlignmentDirectional(0.95, -0.96),
-                            child: FlutterFlowDropDown<String>(
-                              controller: _model.dropDownValueController3 ??=
-                                  FormFieldController<String>(
-                                _model.dropDownValue3 ??= FFAppState().savetime,
-                              ),
-                              options: [
-                                FFLocalizations.of(context).getText(
-                                  '95we028i' /* 15 */,
+                          Flexible(
+                            child: Align(
+                              alignment: const AlignmentDirectional(0.95, -0.96),
+                              child: FlutterFlowDropDown<String>(
+                                controller: _model.dropDownValueController3 ??=
+                                    FormFieldController<String>(
+                                  _model.dropDownValue3 ??=
+                                      FFAppState().savetime,
                                 ),
-                                FFLocalizations.of(context).getText(
-                                  '82smr6hn' /* 30 */,
-                                ),
-                                FFLocalizations.of(context).getText(
-                                  '9law8jq7' /* 60 */,
-                                ),
-                                FFLocalizations.of(context).getText(
-                                  '1wjklzqv' /* 90 */,
-                                ),
-                                FFLocalizations.of(context).getText(
-                                  'saj755dh' /* 120 */,
-                                )
-                              ],
-                              onChanged: (val) async {
-                                setState(() => _model.dropDownValue3 = val);
-                                FFAppState().savetime = _model.dropDownValue3!;
-                                setState(() {});
-                                _model.savesettime =
-                                    await actions.convertMinutesToMilliseconds(
-                                  FFAppState().savetime,
-                                );
-                                FFAppState().savesettime = _model.savesettime!;
-                                setState(() {});
-
-                                setState(() {});
-                              },
-                              width: 100.0,
-                              height: 50.0,
-                              textStyle: FlutterFlowTheme.of(context)
-                                  .bodyMedium
-                                  .override(
-                                    fontFamily: 'Manrope',
-                                    fontSize: 12.0,
-                                    letterSpacing: 0.0,
+                                options: [
+                                  FFLocalizations.of(context).getText(
+                                    '95we028i' /* 15 */,
                                   ),
-                              hintText: FFLocalizations.of(context).getText(
-                                'ayvcpw0c' /* Minutes */,
+                                  FFLocalizations.of(context).getText(
+                                    '82smr6hn' /* 30 */,
+                                  ),
+                                  FFLocalizations.of(context).getText(
+                                    '9law8jq7' /* 60 */,
+                                  ),
+                                  FFLocalizations.of(context).getText(
+                                    '1wjklzqv' /* 90 */,
+                                  ),
+                                  FFLocalizations.of(context).getText(
+                                    'saj755dh' /* 120 */,
+                                  )
+                                ],
+                                onChanged: (val) async {
+                                  safeSetState(
+                                      () => _model.dropDownValue3 = val);
+                                  FFAppState().savetime =
+                                      _model.dropDownValue3!;
+                                  safeSetState(() {});
+                                  _model.savesettime = await actions
+                                      .convertMinutesToMilliseconds(
+                                    FFAppState().savetime,
+                                  );
+                                  FFAppState().savesettime =
+                                      _model.savesettime!;
+                                  safeSetState(() {});
+
+                                  safeSetState(() {});
+                                },
+                                width: 100.0,
+                                height: 50.0,
+                                textStyle: FlutterFlowTheme.of(context)
+                                    .bodyMedium
+                                    .override(
+                                      fontFamily: 'Manrope',
+                                      fontSize: 12.0,
+                                      letterSpacing: 0.0,
+                                    ),
+                                hintText: FFLocalizations.of(context).getText(
+                                  'ayvcpw0c' /* Minutes */,
+                                ),
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                  color:
+                                      FlutterFlowTheme.of(context).primaryText,
+                                  size: 24.0,
+                                ),
+                                fillColor: FlutterFlowTheme.of(context)
+                                    .secondaryBackground,
+                                elevation: 2.0,
+                                borderColor: FlutterFlowTheme.of(context)
+                                    .secondaryBackground,
+                                borderWidth: 2.0,
+                                borderRadius: 8.0,
+                                margin: const EdgeInsetsDirectional.fromSTEB(
+                                    16.0, 4.0, 16.0, 4.0),
+                                hidesUnderline: true,
+                                isOverButton: true,
+                                isSearchable: false,
+                                isMultiSelect: false,
                               ),
-                              icon: Icon(
-                                Icons.arrow_drop_down,
-                                color: FlutterFlowTheme.of(context).primaryText,
-                                size: 24.0,
-                              ),
-                              fillColor: FlutterFlowTheme.of(context)
-                                  .secondaryBackground,
-                              elevation: 2.0,
-                              borderColor: FlutterFlowTheme.of(context)
-                                  .secondaryBackground,
-                              borderWidth: 2.0,
-                              borderRadius: 8.0,
-                              margin: const EdgeInsetsDirectional.fromSTEB(
-                                  16.0, 4.0, 16.0, 4.0),
-                              hidesUnderline: true,
-                              isOverButton: true,
-                              isSearchable: false,
-                              isMultiSelect: false,
                             ),
                           ),
                         ],

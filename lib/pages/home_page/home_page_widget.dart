@@ -60,32 +60,30 @@ class _HomePageWidgetState extends State<HomePageWidget>
             alignment: const AlignmentDirectional(0.0, 0.0)
                 .resolve(Directionality.of(context)),
             child: GestureDetector(
-              onTap: () => _model.unfocusNode.canRequestFocus
-                  ? FocusScope.of(context).requestFocus(_model.unfocusNode)
-                  : FocusScope.of(context).unfocus(),
+              onTap: () => FocusScope.of(dialogContext).unfocus(),
               child: const HowToUseWidget(),
             ),
           );
         },
-      ).then((value) => setState(() {}));
+      );
     });
 
     _model.tabBarController1 = TabController(
       vsync: this,
       length: 4,
       initialIndex: 0,
-    )..addListener(() => setState(() {}));
+    )..addListener(() => safeSetState(() {}));
     _model.tabBarController2 = TabController(
       vsync: this,
       length: 2,
       initialIndex: 0,
-    )..addListener(() => setState(() {}));
+    )..addListener(() => safeSetState(() {}));
     _model.textController ??= TextEditingController();
     _model.textFieldFocusNode ??= FocusNode();
     _model.textFieldFocusNode!.addListener(
       () async {
         _model.isShowFullList = true;
-        setState(() {});
+        safeSetState(() {});
         await actions.resetAllFilters(
           context,
         );
@@ -125,7 +123,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
       ),
     });
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
@@ -141,9 +139,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
 
     return Builder(
       builder: (context) => GestureDetector(
-        onTap: () => _model.unfocusNode.canRequestFocus
-            ? FocusScope.of(context).requestFocus(_model.unfocusNode)
-            : FocusScope.of(context).unfocus(),
+        onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
           key: scaffoldKey,
           backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
@@ -179,10 +175,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                         context: context,
                         builder: (context) {
                           return GestureDetector(
-                            onTap: () => _model.unfocusNode.canRequestFocus
-                                ? FocusScope.of(context)
-                                    .requestFocus(_model.unfocusNode)
-                                : FocusScope.of(context).unfocus(),
+                            onTap: () => FocusScope.of(context).unfocus(),
                             child: Padding(
                               padding: MediaQuery.viewInsetsOf(context),
                               child: const OptionWidget(),
@@ -394,7 +387,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                       _model.addToAudiofilebyte(
                                                                           _model
                                                                               .recordedFileBytes1);
-                                                                      setState(
+                                                                      safeSetState(
                                                                           () {});
                                                                       FFAppState()
                                                                           .addToRecordlist(
@@ -411,7 +404,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                       FFAppState()
                                                                               .Recording =
                                                                           false;
-                                                                      setState(
+                                                                      safeSetState(
                                                                           () {});
                                                                       await actions
                                                                           .removeOutdatedRecordsandrefresh(
@@ -434,7 +427,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                               .timerController1
                                                                               .onResetTimer();
 
-                                                                          setState(
+                                                                          safeSetState(
                                                                               () {
                                                                             _model.tabBarController1!.animateTo(
                                                                               min(_model.tabBarController1!.length - 1, _model.tabBarController1!.index + 1),
@@ -447,11 +440,11 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                               true) {
                                                                             FFAppState().startsignal =
                                                                                 true;
-                                                                            setState(() {});
+                                                                            safeSetState(() {});
                                                                           } else {
                                                                             FFAppState().startsignal =
                                                                                 false;
-                                                                            setState(() {});
+                                                                            safeSetState(() {});
                                                                           }
                                                                         }),
                                                                         Future(
@@ -462,7 +455,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                         }),
                                                                       ]);
 
-                                                                      setState(
+                                                                      safeSetState(
                                                                           () {});
                                                                     },
                                                                     child:
@@ -535,8 +528,10 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                       FFAppState()
                                                                               .loopend =
                                                                           true;
-                                                                      setState(
+                                                                      safeSetState(
                                                                           () {});
+                                                                      await actions
+                                                                          .enableBackgroundExecution();
                                                                       while (FFAppState()
                                                                           .loopend) {
                                                                         await startAudioRecording(
@@ -558,14 +553,14 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                 false;
                                                                             _model.responseSent =
                                                                                 false;
-                                                                            setState(() {});
+                                                                            safeSetState(() {});
                                                                             FFAppState().starttime =
                                                                                 _model.endTime!.millisecondsSinceEpoch;
                                                                             FFAppState().Recording =
                                                                                 true;
                                                                             FFAppState().startsignal =
                                                                                 false;
-                                                                            setState(() {});
+                                                                            safeSetState(() {});
                                                                             await actions.waitForStartSignal(
                                                                               context,
                                                                             );
@@ -652,7 +647,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                           _model.timerValue1 =
                                                                               displayTime;
                                                                           if (shouldUpdate) {
-                                                                            setState(() {});
+                                                                            safeSetState(() {});
                                                                           }
                                                                         },
                                                                         onEnded:
@@ -679,7 +674,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                               true;
                                                                           _model
                                                                               .addToAudiofilebyte(_model.recordedFileBytes1);
-                                                                          setState(
+                                                                          safeSetState(
                                                                               () {});
                                                                           FFAppState()
                                                                               .addToRecordlist(RecordlistStruct(
@@ -692,7 +687,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                           ));
                                                                           FFAppState().Recording =
                                                                               false;
-                                                                          setState(
+                                                                          safeSetState(
                                                                               () {});
                                                                           await actions
                                                                               .removeOutdatedRecordsandrefresh(
@@ -709,10 +704,10 @@ class _HomePageWidgetState extends State<HomePageWidget>
 
                                                                               if (FFAppState().Signalfactor == true) {
                                                                                 FFAppState().startsignal = true;
-                                                                                setState(() {});
+                                                                                safeSetState(() {});
                                                                               } else {
                                                                                 FFAppState().startsignal = false;
-                                                                                setState(() {});
+                                                                                safeSetState(() {});
                                                                               }
                                                                             }),
                                                                             Future(() async {
@@ -720,7 +715,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                             }),
                                                                           ]);
 
-                                                                          setState(
+                                                                          safeSetState(
                                                                               () {});
                                                                         },
                                                                         textAlign:
@@ -766,7 +761,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                     _model.timerValue2 =
                                                                         displayTime;
                                                                     if (shouldUpdate) {
-                                                                      setState(
+                                                                      safeSetState(
                                                                           () {});
                                                                     }
                                                                   },
@@ -951,7 +946,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                   await actions.refreshListView(
                                                                                     context,
                                                                                   );
-                                                                                  setState(() {});
+                                                                                  safeSetState(() {});
                                                                                 },
                                                                                 titleStyle: FlutterFlowTheme.of(context).titleLarge.override(
                                                                                       fontFamily: 'Manrope',
@@ -1029,7 +1024,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                           FFButtonWidget(
                                                                                             onPressed: () async {
                                                                                               _model.idx = 0;
-                                                                                              setState(() {});
+                                                                                              safeSetState(() {});
                                                                                               while (_model.idx! < FFAppState().Recordlist.length) {
                                                                                                 FFAppState().updateRecordlistAtIndex(
                                                                                                   _model.idx!,
@@ -1037,10 +1032,10 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                 );
                                                                                                 FFAppState().update(() {});
                                                                                                 _model.idx = _model.idx! + 1;
-                                                                                                setState(() {});
+                                                                                                safeSetState(() {});
                                                                                               }
                                                                                               _model.chkAll = !_model.chkAll;
-                                                                                              setState(() {});
+                                                                                              safeSetState(() {});
                                                                                             },
                                                                                             text: '',
                                                                                             icon: Icon(
@@ -1124,6 +1119,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                   child: Builder(
                                                                                     builder: (context) {
                                                                                       final recmon = FFAppState().Recordlist.toList();
+
                                                                                       return ListView.builder(
                                                                                         padding: EdgeInsets.zero,
                                                                                         reverse: true,
@@ -1135,12 +1131,12 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                           final recmonItem = recmon[recmonIndex];
                                                                                           return Visibility(
                                                                                             visible: dateTimeFormat(
-                                                                                                  'yMd',
+                                                                                                  "yMd",
                                                                                                   recmonItem.date,
                                                                                                   locale: FFLocalizations.of(context).languageCode,
                                                                                                 ) ==
                                                                                                 dateTimeFormat(
-                                                                                                  'yMd',
+                                                                                                  "yMd",
                                                                                                   _model.calendarSelectedDay1?.start,
                                                                                                   locale: FFLocalizations.of(context).languageCode,
                                                                                                 ),
@@ -1153,7 +1149,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                 highlightColor: Colors.transparent,
                                                                                                 onTap: () async {
                                                                                                   FFAppState().currentURL = recmonItem.audiofile;
-                                                                                                  setState(() {});
+                                                                                                  safeSetState(() {});
                                                                                                   await showModalBottomSheet(
                                                                                                     isScrollControlled: true,
                                                                                                     backgroundColor: Colors.transparent,
@@ -1161,7 +1157,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                     context: context,
                                                                                                     builder: (context) {
                                                                                                       return GestureDetector(
-                                                                                                        onTap: () => _model.unfocusNode.canRequestFocus ? FocusScope.of(context).requestFocus(_model.unfocusNode) : FocusScope.of(context).unfocus(),
+                                                                                                        onTap: () => FocusScope.of(context).unfocus(),
                                                                                                         child: Padding(
                                                                                                           padding: MediaQuery.viewInsetsOf(context),
                                                                                                           child: NoteWidget(
@@ -1231,7 +1227,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                                                         recmonIndex,
                                                                                                                                         (e) => e..check = false,
                                                                                                                                       );
-                                                                                                                                      setState(() {});
+                                                                                                                                      safeSetState(() {});
                                                                                                                                     },
                                                                                                                                     child: Container(
                                                                                                                                       width: 18.0,
@@ -1270,7 +1266,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                                                       recmonIndex,
                                                                                                                                       (e) => e..check = true,
                                                                                                                                     );
-                                                                                                                                    setState(() {});
+                                                                                                                                    safeSetState(() {});
                                                                                                                                   },
                                                                                                                                   child: Container(
                                                                                                                                     width: 18.0,
@@ -1382,7 +1378,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                                               recmonIndex,
                                                                                                                               (e) => e..nameedit = true,
                                                                                                                             );
-                                                                                                                            setState(() {});
+                                                                                                                            safeSetState(() {});
                                                                                                                             await actions.refreshListView(
                                                                                                                               context,
                                                                                                                             );
@@ -1504,15 +1500,15 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                                                   false;
                                                                                                                               if (confirmDialogResponse) {
                                                                                                                                 FFAppState().favorite = false;
-                                                                                                                                setState(() {});
+                                                                                                                                safeSetState(() {});
                                                                                                                                 FFAppState().updateRecordlistAtIndex(
                                                                                                                                   recmonIndex,
                                                                                                                                   (e) => e..favorite = FFAppState().favorite,
                                                                                                                                 );
-                                                                                                                                setState(() {});
+                                                                                                                                safeSetState(() {});
                                                                                                                               }
                                                                                                                               FFAppState().favorite = false;
-                                                                                                                              setState(() {});
+                                                                                                                              safeSetState(() {});
                                                                                                                             },
                                                                                                                             child: Container(
                                                                                                                               width: 40.0,
@@ -1565,13 +1561,13 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                                                 false;
                                                                                                                             if (confirmDialogResponse) {
                                                                                                                               FFAppState().favorite = true;
-                                                                                                                              setState(() {});
+                                                                                                                              safeSetState(() {});
                                                                                                                               FFAppState().updateRecordlistAtIndex(
                                                                                                                                 recmonIndex,
                                                                                                                                 (e) => e..favorite = FFAppState().favorite,
                                                                                                                               );
-                                                                                                                              setState(() {});
-                                                                                                                              setState(() {
+                                                                                                                              safeSetState(() {});
+                                                                                                                              safeSetState(() {
                                                                                                                                 _model.tabBarController1!.animateTo(
                                                                                                                                   _model.tabBarController1!.length - 1,
                                                                                                                                   duration: const Duration(milliseconds: 300),
@@ -1580,7 +1576,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                                               });
                                                                                                                             }
                                                                                                                             FFAppState().favorite = false;
-                                                                                                                            setState(() {});
+                                                                                                                            safeSetState(() {});
                                                                                                                           },
                                                                                                                           text: '',
                                                                                                                           icon: Icon(
@@ -1628,7 +1624,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                                               padding: const EdgeInsetsDirectional.fromSTEB(4.0, 4.0, 4.0, 4.0),
                                                                                                                               child: Text(
                                                                                                                                 dateTimeFormat(
-                                                                                                                                  'relative',
+                                                                                                                                  "jms",
                                                                                                                                   recmonItem.date!,
                                                                                                                                   locale: FFLocalizations.of(context).languageCode,
                                                                                                                                 ),
@@ -1647,7 +1643,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                                   ),
                                                                                                                   Text(
                                                                                                                     dateTimeFormat(
-                                                                                                                      'yMd',
+                                                                                                                      "yMd",
                                                                                                                       recmonItem.date!,
                                                                                                                       locale: FFLocalizations.of(context).languageCode,
                                                                                                                     ),
@@ -1655,20 +1651,6 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                                           fontFamily: 'Manrope',
                                                                                                                           letterSpacing: 0.0,
                                                                                                                         ),
-                                                                                                                  ),
-                                                                                                                  Padding(
-                                                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(4.0, 0.0, 4.0, 0.0),
-                                                                                                                    child: Text(
-                                                                                                                      dateTimeFormat(
-                                                                                                                        'jms',
-                                                                                                                        recmonItem.date!,
-                                                                                                                        locale: FFLocalizations.of(context).languageCode,
-                                                                                                                      ),
-                                                                                                                      style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                                                                                            fontFamily: 'Manrope',
-                                                                                                                            letterSpacing: 0.0,
-                                                                                                                          ),
-                                                                                                                    ),
                                                                                                                   ),
                                                                                                                   Text(
                                                                                                                     recmonItem.favorite.toString(),
@@ -1754,7 +1736,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                                                         recmonIndex,
                                                                                                                                         (e) => e..save = true,
                                                                                                                                       );
-                                                                                                                                      setState(() {});
+                                                                                                                                      safeSetState(() {});
                                                                                                                                     }
                                                                                                                                   },
                                                                                                                                   text: '',
@@ -1835,12 +1817,12 @@ class _HomePageWidgetState extends State<HomePageWidget>
 
                                                                                                                                 if ((_model.apiRequestBuildship?.succeeded ?? true)) {
                                                                                                                                   _model.responseReceived = true;
-                                                                                                                                  setState(() {});
+                                                                                                                                  safeSetState(() {});
                                                                                                                                   FFAppState().addToItems(ItemStruct.maybeFromMap((_model.apiRequestBuildship?.jsonBody ?? ''))!);
-                                                                                                                                  setState(() {});
+                                                                                                                                  safeSetState(() {});
                                                                                                                                 } else {
                                                                                                                                   _model.responseReceived = true;
-                                                                                                                                  setState(() {});
+                                                                                                                                  safeSetState(() {});
                                                                                                                                   ScaffoldMessenger.of(context).showSnackBar(
                                                                                                                                     SnackBar(
                                                                                                                                       content: Text(
@@ -1856,7 +1838,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                                                 }
                                                                                                                               }),
                                                                                                                               Future(() async {
-                                                                                                                                setState(() {
+                                                                                                                                safeSetState(() {
                                                                                                                                   _model.tabBarController1!.animateTo(
                                                                                                                                     min(_model.tabBarController1!.length - 1, _model.tabBarController1!.index + 1),
                                                                                                                                     duration: const Duration(milliseconds: 300),
@@ -1866,7 +1848,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                                               }),
                                                                                                                             ]);
 
-                                                                                                                            setState(() {});
+                                                                                                                            safeSetState(() {});
                                                                                                                           },
                                                                                                                           child: Icon(
                                                                                                                             Icons.text_fields,
@@ -1940,7 +1922,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                 weekFormat: true,
                                                                                 weekStartsMonday: true,
                                                                                 onChange: (DateTimeRange? newSelectedDate) {
-                                                                                  setState(() => _model.calendarSelectedDay2 = newSelectedDate);
+                                                                                  safeSetState(() => _model.calendarSelectedDay2 = newSelectedDate);
                                                                                 },
                                                                                 titleStyle: FlutterFlowTheme.of(context).titleLarge.override(
                                                                                       fontFamily: 'Manrope',
@@ -2021,7 +2003,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                   FFButtonWidget(
                                                                                                     onPressed: () async {
                                                                                                       _model.idx = 0;
-                                                                                                      setState(() {});
+                                                                                                      safeSetState(() {});
                                                                                                       while (_model.idx! < FFAppState().Recordlist.length) {
                                                                                                         FFAppState().updateRecordlistAtIndex(
                                                                                                           _model.idx!,
@@ -2029,10 +2011,10 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                         );
                                                                                                         FFAppState().update(() {});
                                                                                                         _model.idx = _model.idx! + 1;
-                                                                                                        setState(() {});
+                                                                                                        safeSetState(() {});
                                                                                                       }
                                                                                                       _model.chkAll = !_model.chkAll;
-                                                                                                      setState(() {});
+                                                                                                      safeSetState(() {});
                                                                                                     },
                                                                                                     text: '',
                                                                                                     icon: Icon(
@@ -2120,6 +2102,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                   child: Builder(
                                                                                     builder: (context) {
                                                                                       final recweek = FFAppState().Recordlist.toList();
+
                                                                                       return ListView.builder(
                                                                                         padding: EdgeInsets.zero,
                                                                                         reverse: true,
@@ -2131,12 +2114,12 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                           final recweekItem = recweek[recweekIndex];
                                                                                           return Visibility(
                                                                                             visible: dateTimeFormat(
-                                                                                                  'yMd',
+                                                                                                  "yMd",
                                                                                                   _model.calendarSelectedDay2?.start,
                                                                                                   locale: FFLocalizations.of(context).languageCode,
                                                                                                 ) ==
                                                                                                 dateTimeFormat(
-                                                                                                  'yMd',
+                                                                                                  "yMd",
                                                                                                   recweekItem.date,
                                                                                                   locale: FFLocalizations.of(context).languageCode,
                                                                                                 ),
@@ -2149,7 +2132,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                 highlightColor: Colors.transparent,
                                                                                                 onTap: () async {
                                                                                                   FFAppState().currentURL = recweekItem.audiofile;
-                                                                                                  setState(() {});
+                                                                                                  safeSetState(() {});
                                                                                                   await showModalBottomSheet(
                                                                                                     isScrollControlled: true,
                                                                                                     backgroundColor: Colors.transparent,
@@ -2157,7 +2140,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                     context: context,
                                                                                                     builder: (context) {
                                                                                                       return GestureDetector(
-                                                                                                        onTap: () => _model.unfocusNode.canRequestFocus ? FocusScope.of(context).requestFocus(_model.unfocusNode) : FocusScope.of(context).unfocus(),
+                                                                                                        onTap: () => FocusScope.of(context).unfocus(),
                                                                                                         child: Padding(
                                                                                                           padding: MediaQuery.viewInsetsOf(context),
                                                                                                           child: NoteWidget(
@@ -2227,7 +2210,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                                                         recweekIndex,
                                                                                                                                         (e) => e..check = false,
                                                                                                                                       );
-                                                                                                                                      setState(() {});
+                                                                                                                                      safeSetState(() {});
                                                                                                                                     },
                                                                                                                                     child: Container(
                                                                                                                                       width: 18.0,
@@ -2266,7 +2249,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                                                       recweekIndex,
                                                                                                                                       (e) => e..check = true,
                                                                                                                                     );
-                                                                                                                                    setState(() {});
+                                                                                                                                    safeSetState(() {});
                                                                                                                                   },
                                                                                                                                   child: Container(
                                                                                                                                     width: 18.0,
@@ -2378,7 +2361,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                                               recweekIndex,
                                                                                                                               (e) => e..nameedit = true,
                                                                                                                             );
-                                                                                                                            setState(() {});
+                                                                                                                            safeSetState(() {});
                                                                                                                             await actions.refreshListView(
                                                                                                                               context,
                                                                                                                             );
@@ -2498,13 +2481,13 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                                                 false;
                                                                                                                             if (confirmDialogResponse) {
                                                                                                                               FFAppState().favorite = true;
-                                                                                                                              setState(() {});
+                                                                                                                              safeSetState(() {});
                                                                                                                               FFAppState().updateRecordlistAtIndex(
                                                                                                                                 recweekIndex,
                                                                                                                                 (e) => e..favorite = FFAppState().favorite,
                                                                                                                               );
-                                                                                                                              setState(() {});
-                                                                                                                              setState(() {
+                                                                                                                              safeSetState(() {});
+                                                                                                                              safeSetState(() {
                                                                                                                                 _model.tabBarController1!.animateTo(
                                                                                                                                   _model.tabBarController1!.length - 1,
                                                                                                                                   duration: const Duration(milliseconds: 300),
@@ -2513,7 +2496,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                                               });
                                                                                                                             }
                                                                                                                             FFAppState().favorite = false;
-                                                                                                                            setState(() {});
+                                                                                                                            safeSetState(() {});
                                                                                                                           },
                                                                                                                           text: '',
                                                                                                                           icon: Icon(
@@ -2569,7 +2552,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                                         padding: const EdgeInsetsDirectional.fromSTEB(4.0, 4.0, 4.0, 4.0),
                                                                                                                         child: Text(
                                                                                                                           dateTimeFormat(
-                                                                                                                            'relative',
+                                                                                                                            "jms",
                                                                                                                             recweekItem.date!,
                                                                                                                             locale: FFLocalizations.of(context).languageCode,
                                                                                                                           ),
@@ -2585,7 +2568,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                                   ),
                                                                                                                   Text(
                                                                                                                     dateTimeFormat(
-                                                                                                                      'yMd',
+                                                                                                                      "yMd",
                                                                                                                       recweekItem.date!,
                                                                                                                       locale: FFLocalizations.of(context).languageCode,
                                                                                                                     ),
@@ -2593,20 +2576,6 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                                           fontFamily: 'Manrope',
                                                                                                                           letterSpacing: 0.0,
                                                                                                                         ),
-                                                                                                                  ),
-                                                                                                                  Padding(
-                                                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(4.0, 0.0, 4.0, 0.0),
-                                                                                                                    child: Text(
-                                                                                                                      dateTimeFormat(
-                                                                                                                        'jms',
-                                                                                                                        recweekItem.date!,
-                                                                                                                        locale: FFLocalizations.of(context).languageCode,
-                                                                                                                      ),
-                                                                                                                      style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                                                                                            fontFamily: 'Manrope',
-                                                                                                                            letterSpacing: 0.0,
-                                                                                                                          ),
-                                                                                                                    ),
                                                                                                                   ),
                                                                                                                 ],
                                                                                                               ),
@@ -2678,15 +2647,15 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                                                       false;
                                                                                                                                   if (confirmDialogResponse) {
                                                                                                                                     FFAppState().save = true;
-                                                                                                                                    setState(() {});
+                                                                                                                                    safeSetState(() {});
                                                                                                                                     FFAppState().updateRecordlistAtIndex(
                                                                                                                                       recweekIndex,
                                                                                                                                       (e) => e..save = FFAppState().save,
                                                                                                                                     );
-                                                                                                                                    setState(() {});
+                                                                                                                                    safeSetState(() {});
                                                                                                                                   }
                                                                                                                                   FFAppState().save = false;
-                                                                                                                                  setState(() {});
+                                                                                                                                  safeSetState(() {});
                                                                                                                                 },
                                                                                                                                 text: '',
                                                                                                                                 icon: Icon(
@@ -2766,12 +2735,12 @@ class _HomePageWidgetState extends State<HomePageWidget>
 
                                                                                                                               if ((_model.apiRequestBuildship1?.succeeded ?? true)) {
                                                                                                                                 _model.responseReceived = true;
-                                                                                                                                setState(() {});
+                                                                                                                                safeSetState(() {});
                                                                                                                                 FFAppState().addToItems(ItemStruct.maybeFromMap((_model.apiRequestBuildship1?.jsonBody ?? ''))!);
-                                                                                                                                setState(() {});
+                                                                                                                                safeSetState(() {});
                                                                                                                               } else {
                                                                                                                                 _model.responseReceived = true;
-                                                                                                                                setState(() {});
+                                                                                                                                safeSetState(() {});
                                                                                                                                 ScaffoldMessenger.of(context).showSnackBar(
                                                                                                                                   SnackBar(
                                                                                                                                     content: Text(
@@ -2787,7 +2756,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                                               }
                                                                                                                             }),
                                                                                                                             Future(() async {
-                                                                                                                              setState(() {
+                                                                                                                              safeSetState(() {
                                                                                                                                 _model.tabBarController1!.animateTo(
                                                                                                                                   min(_model.tabBarController1!.length - 1, _model.tabBarController1!.index + 1),
                                                                                                                                   duration: const Duration(milliseconds: 300),
@@ -2797,7 +2766,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                                                             }),
                                                                                                                           ]);
 
-                                                                                                                          setState(() {});
+                                                                                                                          safeSetState(() {});
                                                                                                                         },
                                                                                                                         child: Icon(
                                                                                                                           Icons.text_fields,
@@ -2875,7 +2844,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                   () async {
                                                                     _model.isShowFullList =
                                                                         false;
-                                                                    setState(
+                                                                    safeSetState(
                                                                         () {});
                                                                     await actions
                                                                         .resetAllFilters(
@@ -2918,7 +2887,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                   });
                                                                   _model.isShowFullList =
                                                                       false;
-                                                                  setState(
+                                                                  safeSetState(
                                                                       () {});
                                                                   await actions
                                                                       .updateFilterForSearchResults(
@@ -3056,7 +3025,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                             _model.textController?.clear();
                                                                             _model.isShowFullList =
                                                                                 false;
-                                                                            setState(() {});
+                                                                            safeSetState(() {});
                                                                             await actions.resetAllFilters(
                                                                               context,
                                                                             );
@@ -3067,7 +3036,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                             await actions.refreshListView(
                                                                               context,
                                                                             );
-                                                                            setState(() {});
+                                                                            safeSetState(() {});
                                                                           },
                                                                           child:
                                                                               Icon(
@@ -3150,7 +3119,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                             child:
                                                                                 wrapWithModel(
                                                                               model: _model.transcribeItemModel1,
-                                                                              updateCallback: () => setState(() {}),
+                                                                              updateCallback: () => safeSetState(() {}),
                                                                               child: const TranscribeItemWidget(),
                                                                             ).animateOnPageLoad(animationsMap['transcribeItemOnPageLoadAnimation1']!),
                                                                           ),
@@ -3164,6 +3133,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                 child: EmptyComponentWidget(),
                                                                               );
                                                                             }
+
                                                                             return ListView.separated(
                                                                               padding: EdgeInsets.zero,
                                                                               reverse: true,
@@ -3187,7 +3157,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                       context: context,
                                                                                       builder: (context) {
                                                                                         return GestureDetector(
-                                                                                          onTap: () => _model.unfocusNode.canRequestFocus ? FocusScope.of(context).requestFocus(_model.unfocusNode) : FocusScope.of(context).unfocus(),
+                                                                                          onTap: () => FocusScope.of(context).unfocus(),
                                                                                           child: Padding(
                                                                                             padding: MediaQuery.viewInsetsOf(context),
                                                                                             child: MeetingDetailsWidget(
@@ -3221,7 +3191,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                         false;
                                                                                     if (confirmDialogResponse) {
                                                                                       FFAppState().removeAtIndexFromItems(itemsIndex);
-                                                                                      setState(() {});
+                                                                                      safeSetState(() {});
                                                                                     }
                                                                                   },
                                                                                   child: TranscribeItemWidget(
@@ -3261,7 +3231,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                             child:
                                                                                 wrapWithModel(
                                                                               model: _model.transcribeItemModel3,
-                                                                              updateCallback: () => setState(() {}),
+                                                                              updateCallback: () => safeSetState(() {}),
                                                                               child: const TranscribeItemWidget(),
                                                                             ).animateOnPageLoad(animationsMap['transcribeItemOnPageLoadAnimation2']!),
                                                                           ),
@@ -3275,6 +3245,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                 child: EmptyComponentWidget(),
                                                                               );
                                                                             }
+
                                                                             return ListView.separated(
                                                                               padding: EdgeInsets.zero,
                                                                               reverse: true,
@@ -3298,7 +3269,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                       context: context,
                                                                                       builder: (context) {
                                                                                         return GestureDetector(
-                                                                                          onTap: () => _model.unfocusNode.canRequestFocus ? FocusScope.of(context).requestFocus(_model.unfocusNode) : FocusScope.of(context).unfocus(),
+                                                                                          onTap: () => FocusScope.of(context).unfocus(),
                                                                                           child: Padding(
                                                                                             padding: MediaQuery.viewInsetsOf(context),
                                                                                             child: MeetingDetailsWidget(
@@ -3332,7 +3303,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                         false;
                                                                                     if (confirmDialogResponse) {
                                                                                       FFAppState().removeAtIndexFromItems(itemsIndex);
-                                                                                      setState(() {});
+                                                                                      safeSetState(() {});
                                                                                     }
                                                                                   },
                                                                                   child: TranscribeItemWidget(
@@ -3476,6 +3447,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                   .where((e) =>
                                                                       e.favorite)
                                                                   .toList();
+
                                                           return ListView
                                                               .builder(
                                                             padding:
@@ -3516,7 +3488,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                             .currentURL =
                                                                         favoriteItem
                                                                             .audiofile;
-                                                                    setState(
+                                                                    safeSetState(
                                                                         () {});
                                                                     await showModalBottomSheet(
                                                                       isScrollControlled:
@@ -3531,9 +3503,8 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                       builder:
                                                                           (context) {
                                                                         return GestureDetector(
-                                                                          onTap: () => _model.unfocusNode.canRequestFocus
-                                                                              ? FocusScope.of(context).requestFocus(_model.unfocusNode)
-                                                                              : FocusScope.of(context).unfocus(),
+                                                                          onTap: () =>
+                                                                              FocusScope.of(context).unfocus(),
                                                                           child:
                                                                               Padding(
                                                                             padding:
@@ -3749,7 +3720,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                           padding: const EdgeInsetsDirectional.fromSTEB(4.0, 4.0, 4.0, 4.0),
                                                                                           child: Text(
                                                                                             dateTimeFormat(
-                                                                                              'relative',
+                                                                                              "jms",
                                                                                               favoriteItem.date!,
                                                                                               locale: FFLocalizations.of(context).languageCode,
                                                                                             ),
@@ -3765,7 +3736,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                     ),
                                                                                     Text(
                                                                                       dateTimeFormat(
-                                                                                        'yMd',
+                                                                                        "yMd",
                                                                                         favoriteItem.date!,
                                                                                         locale: FFLocalizations.of(context).languageCode,
                                                                                       ),
@@ -3773,20 +3744,6 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                             fontFamily: 'Manrope',
                                                                                             letterSpacing: 0.0,
                                                                                           ),
-                                                                                    ),
-                                                                                    Padding(
-                                                                                      padding: const EdgeInsetsDirectional.fromSTEB(4.0, 0.0, 4.0, 0.0),
-                                                                                      child: Text(
-                                                                                        dateTimeFormat(
-                                                                                          'jms',
-                                                                                          favoriteItem.date!,
-                                                                                          locale: FFLocalizations.of(context).languageCode,
-                                                                                        ),
-                                                                                        style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                                                              fontFamily: 'Manrope',
-                                                                                              letterSpacing: 0.0,
-                                                                                            ),
-                                                                                      ),
                                                                                     ),
                                                                                   ],
                                                                                 ),
@@ -3831,12 +3788,12 @@ class _HomePageWidgetState extends State<HomePageWidget>
 
                                                                                         if ((_model.apiRequestBuildship2?.succeeded ?? true)) {
                                                                                           _model.responseReceived = true;
-                                                                                          setState(() {});
+                                                                                          safeSetState(() {});
                                                                                           FFAppState().addToItems(ItemStruct.maybeFromMap((_model.apiRequestBuildship2?.jsonBody ?? ''))!);
-                                                                                          setState(() {});
+                                                                                          safeSetState(() {});
                                                                                         } else {
                                                                                           _model.responseReceived = true;
-                                                                                          setState(() {});
+                                                                                          safeSetState(() {});
                                                                                           ScaffoldMessenger.of(context).showSnackBar(
                                                                                             SnackBar(
                                                                                               content: Text(
@@ -3852,7 +3809,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                         }
                                                                                       }),
                                                                                       Future(() async {
-                                                                                        setState(() {
+                                                                                        safeSetState(() {
                                                                                           _model.tabBarController1!.animateTo(
                                                                                             min(_model.tabBarController1!.length - 1, _model.tabBarController1!.index + 1),
                                                                                             duration: const Duration(milliseconds: 300),
@@ -3862,7 +3819,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                                                       }),
                                                                                     ]);
 
-                                                                                    setState(() {});
+                                                                                    safeSetState(() {});
                                                                                   },
                                                                                   child: Icon(
                                                                                     Icons.text_fields,

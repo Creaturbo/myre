@@ -26,7 +26,7 @@ class _HowToUseWidgetState extends State<HowToUseWidget> {
     super.initState();
     _model = createModel(context, () => HowToUseModel());
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
